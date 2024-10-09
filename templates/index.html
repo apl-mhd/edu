@@ -1,0 +1,31 @@
+{% extends "base.html" %} {% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    {% block css %}
+    {% endblock css %}
+  </head>
+  <body>
+    {% block content %}
+
+    
+    
+    {% endblock content %} {% block script %}
+    <script>
+      const { createApp } = Vue;
+      createApp({
+        data() {
+          return {
+            message: "apel",
+          };
+        },
+        delimiters: ["[[", "]]"],
+      }).mount("#app");
+    </script>
+    {% endblock script %}
+  </body>
+</html>

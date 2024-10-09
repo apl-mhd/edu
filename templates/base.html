@@ -1,0 +1,114 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{% static "css/bootstrap_5.3.css" %}">
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="{% static "css/style.css" %}">
+    
+    {% block css %}{% endblock css %}
+    <script src="{% static "js/bootstrap_5.3.js" %}"></script>
+    <script src="{% static "js/axios.js" %}"></script>
+    <script src="{% static "js/vue.js" %}"></script>    
+ 
+</head>
+<body>
+
+    <div class="wrapper">
+      <div class="sidebar">
+        <div class="sidebar_top">
+          <div class="user_logo">
+            <!--<img src="img/user.png" alt="" /> --> 
+          </div>
+          <div class="menubar_toggle">
+            <i id="toogle" class="bx bx-menu"></i>
+          </div>
+        </div>
+        <ul>
+          <li class="nav_links">
+            <a href="#"> <i class="bx bxs-home"></i> <span>Home</span></a>
+          </li>
+          <li class="nav_links">
+            <a href="#"><i class="bx bxs-cog"></i><span>Service</span></a>
+          </li>
+          <li class="sub_menu_parent active nav_links">
+            <a class="sub_menu_collapse" href="#"
+              ><i class="bx bxs-group"></i><span>Student</span></a
+            >
+            <ul class="sub_menu collapse_toggle">
+              <li><a href="#">All Student</a></li>
+              <li><a href="#">Create Student</a></li>
+              <li><a href="#">Payment</a></li>
+              <li><a href="#">Report</a></li>
+            </ul>
+          </li>
+          <li class="nav_links">
+            <a href="#"><i class="bx bx-cart-download"></i><span>Buy</span></a>
+          </li>
+          <li class="nav_links">
+            <a href="#"><i class="bx bx-cart-add"></i><span>Sell</span></a>
+          </li>
+          <li class="nav_links">
+            <a href="#"><i class="bx bxs-home"></i><span>Deposit</span></a>
+          </li>
+          <li class="nav_links">
+            <a href="#"><i class="bx bxs-home"></i><span>Withdraw</span></a>
+          </li>
+          <li class="nav_links">
+            <a href="#"><i class="bx bxs-home"></i><span>About</span></a>
+          </li>
+          <li class="nav_links">
+            <a href="#"><i class="bx bxs-home"></i><span>Contact</span></a>
+          </li>
+          <li class="nav_links">
+            <a href="#"><i class="bx bxs-home"></i><span>Contact</span></a>
+          </li>
+          <li class="nav_links">
+            <a href="#"><i class="bx bxs-home"></i><span>Contact</span></a>
+          </li>
+          <li class="nav_links">
+            <a href="#"><i class="bx bxs-home"></i><span>Contact</span></a>
+          </li>
+          <li class="nav_links">
+            <a href="#"><i class="bx bxs-home"></i><span>Contact</span></a>
+          </li>
+          <li class="nav_links">
+            <a href="#"><i class="bx bxs-home"></i><span>Contact</span></a>
+          </li>
+          <li class="nav_links">
+            <a href="#"><i class="bx bxs-home"></i><span>Contact Last</span></a>
+          </li>
+        </ul>
+      </div>
+      <div class="main">
+            {% block content %}{% endblock content %}
+      </div>
+    </div>
+    <script>
+      const subMenuCollapse = document.querySelector(".sub_menu_collapse");
+      const subMenu = document.querySelector(".sub_menu");
+      subMenuCollapse.addEventListener("click", () => {
+        subMenu.classList.toggle("collapse_toggle");
+      });
+
+      const sidebar = document.querySelector(".sidebar");
+
+      const toogle = document.getElementById("toogle");
+      console.log(toogle);
+
+      toogle.addEventListener("click", () => {
+        sidebar.classList.toggle("sidebar_toogle");
+      });
+    </script>
+
+   
+    {% block script %}{% endblock script %}
+</body>
+</html>

@@ -1,0 +1,119 @@
+{% extends "base.html" %} {% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    {% block css %}
+    {% endblock css %}
+  </head>
+  <body>
+    {% block content %}
+
+    <div class="container">
+          <div class="row student_create">
+            <!-- Start form -->
+            <form class="row gx-2 gy-3">
+              <div class="col-3">
+                <label for="name" class="form-label">Name *</label>
+                <input type="text" name="name" class="form-control" id="name" />
+              </div>
+              <div class="col-3">
+                <label for="phone" class="form-label">Phone *</label>
+                <input
+                  type="text"
+                  name="phone"
+                  class="form-control"
+                  id="phone"
+                />
+              </div>
+              <div class="col-3">
+                <label for="ParentsPhone" class="form-label"
+                  >Gurdian Phone</label
+                >
+                <input
+                  type="text"
+                  name="gurdian_phone"
+                  class="form-control"
+                  id="ParentsPhone"
+                />
+              </div>
+              <div class="col-3">
+                <label for="email" class="form-label">Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  class="form-control"
+                  id="email"
+                />
+              </div>
+              <div class="col-3">
+                <label for="gender" class="form-label">Gender *</label>
+                <select class="form-select" name="gender" id="gender">
+                  <option value="">Male</option>
+                  <option value="">Female</option>
+                </select>
+              </div>
+              <div class="col-3">
+                <label for="location" class="form-label">Course</label>
+                <select class="form-select" name="course" id="location">
+                  <option value="">ICT</option>
+                </select>
+              </div>
+              <div class="col-3">
+                <label for="academicYear" class="form-label"
+                  >Acdemic Year</label
+                >
+                <select
+                  class="form-select"
+                  name="academic_year"
+                  id="academicYear"
+                >
+                  <option value="">2024</option>
+                  <option value="">2023</option>
+                  <option value="">2022</option>
+                </select>
+              </div>
+              <div class="col-3">
+                <label for="location" class="form-label">Home Town</label>
+                <select class="form-select" name="distict" id="location">
+                  <option value="">Bogura</option>
+                  <option value="">Rajshahi</option>
+                  <option value="">Bogura</option>
+                </select>
+              </div>
+              <div class="col-3">
+                <label for="college" class="form-label">College</label>
+                <select class="form-select" name="college" id="college">
+                  <option value="">Azizul Haq College</option>
+                  <option value="">Azizul Haq College</option>
+                  <option value="">Azizul Haq College</option>
+                  <option value="">Azizul Haq College</option>
+                </select>
+              </div>
+              <div class="col-12">
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </div>
+            </form>
+
+            <!-- End Form -->
+             
+          </div>
+    
+    {% endblock content %} {% block script %}
+    <script>
+      const { createApp } = Vue;
+      createApp({
+        data() {
+          return {
+            message: "apel",
+          };
+        },
+        delimiters: ["[[", "]]"],
+      }).mount("#app");
+    </script>
+    {% endblock script %}
+  </body>
+</html>
