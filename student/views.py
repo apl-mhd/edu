@@ -9,9 +9,8 @@ import os
 
 
 def index(request):
-
-    BASE_DIR = Path(__file__).resolve().parent.parent
-
-    a = f"{BASE_DIR}/templates/index.html"
-
     return render(request, 'index.html')
+
+
+def student(request):
+    return render(request, 'student.html')
