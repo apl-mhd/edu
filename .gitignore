@@ -1,0 +1,89 @@
+# Python files
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.py[cod]
+
+# Virtual Environment
+venv/
+env/
+ENV/
+venv.bak/
+
+# Django specific files
+*.log
+*.pot
+*.py~
+*.sqlite3
+*.env  # Environment variables file
+
+# Django cache, media, and static files
+/media/
+staticfiles/
+static/
+
+# Coverage reports
+htmlcov/
+.coverage
+.tox/
+.nox/
+.cache
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+
+# Translations
+*.mo
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# Backup files
+*.bak
+*.swp
+*.swo
+*.orig
+*.tmp
+
+# macOS specific files
+.DS_Store
+
+# Windows specific files
+Thumbs.db
+ehthumbs.db
+
+# IDE and editor specific files
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
+# Node.js and frontend (if using npm/yarn)
+node_modules/
+dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# Build directories
+build/
+dist/
+
+# Docker specific files (if applicable)
+*.env.docker
+.docker/
+docker-compose.override.yml
+docker-compose.local.yml
+
+# Other system files
+.Python
+.pdm.toml
+.pyrightconfig.json
+
+# Heroku specific files (if applicable)
+.heroku/
+Procfile
