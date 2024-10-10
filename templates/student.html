@@ -15,16 +15,17 @@
     <div id="app" class="container">
           <div class="row student_create">
             <!-- Start form -->
-            <form class="row gx-2 gy-3">
+            <form class="row gx-2 gy-3" @submit.prevent="submitForm">
               <div class="col-3">
                 <label for="name" class="form-label">Name *</label>
-                <input type="text" name="name" class="form-control" id="name" />
+                <input type="text" name="name" v-model="student.name" class="form-control" id="name" />
               </div>
               <div class="col-3">
                 <label for="phone" class="form-label">Phone *</label>
                 <input
                   type="text"
                   name="phone"
+                  v-model="student.phone"
                   class="form-control"
                   id="phone"
                 />
@@ -36,6 +37,7 @@
                 <input
                   type="text"
                   name="gurdian_phone"
+                  v-model="student.gurdian_phone"
                   class="form-control"
                   id="ParentsPhone"
                 />
@@ -44,6 +46,7 @@
                 <label for="email" class="form-label">Email</label>
                 <input
                   type="email"
+                  v-model="student.email"
                   name="email"
                   class="form-control"
                   id="email"
@@ -51,15 +54,18 @@
               </div>
               <div class="col-3">
                 <label for="gender" class="form-label">Gender *</label>
-                <select class="form-select" name="gender" id="gender">
-                  <option value="">Male</option>
-                  <option value="">Female</option>
+                <select class="form-select" v-model="student.gender"
+                  name="gender" id="gender">
+                  <option disabled value="null">Select Gender</option>
+                  <option value="M">Male</option>
+                  <option value="F">Female</option>
                 </select>
               </div>
               <div class="col-3">
                 <label for="location" class="form-label">Course</label>
-                <select class="form-select" name="course" id="location">
-                  <option value="">ICT</option>
+                <select class="form-select" v-model="student.course" name="course" id="location">
+                  <option disabled value=""> Select Course</option>
+                  <option v-for="course in courses" :key="course.id" :value="course.id">[[course.name]]</option>                  
                 </select>
               </div>
               <div class="col-3">
@@ -68,32 +74,32 @@
                 >
                 <select
                   class="form-select"
-                  name="academic_year"
+                  name="year"
+                  v-model="student.year"
                   id="academicYear"
                 >
-                  <option value="">2024</option>
-                  <option value="">2023</option>
-                  <option value="">2022</option>
+                <option disabled value="">Select College</option>
+                <option v-for="year in academicYears" :key="year.id" :value="year.id">HSC Batch - [[year.year]]</option>    
+        
                 </select>
               </div>
               <div class="col-3">
                 <label for="location" class="form-label">Home Town</label>
-                <select class="form-select" name="distict" id="location">
-                  <option value="">Bogura</option>
-                  <option value="">Rajshahi</option>
-                  <option value="">Bogura</option>
+                <select class="form-select" name="home_town" v-model="student.home_town" id="location">
+                    <option disabled value="">Select Home Town</option>
+                    <option v-for="town in homeTowns" :key="town.id" :value="town.id">[[town.name]]</option>
                 </select>
               </div>
               <div class="col-3">
                 <label for="college" class="form-label">College</label>
-                <select class="form-select" name="college" id="college">
-                  <option value="">Azizul Haq College</option>
-                  <option value="">Azizul Haq College</option>
-                  <option value="">Azizul Haq College</option>
-                  <option value="">Azizul Haq College</option>
+                <select class="form-select" name="college" v-model="student.college" id="college">
+                  <option disabled value>Select College</option>
+                    <option v-for="college in colleges" :key="college.id" :value="college.id">[[college.name]]</option>
+
                 </select>
               </div>
               <div class="col-12">
+                <button type="reset" class="btn btn-danger">Reset</button>
                 <button type="submit" class="btn btn-primary">Submit</button>
               </div>
             </form>
@@ -103,13 +109,49 @@
     
     {% endblock content %} {% block script %}
     <script>
+     const homeTownLIst = JSON.parse("{{home_town_list|escapejs}}");
+     const collegeList = JSON.parse("{{college_list|escapejs}}");
+     const courseList = JSON.parse("{{course_list|escapejs}}");
+     const academicYearList = JSON.parse("{{academic_year_list|escapejs}}");
+
       const { createApp } = Vue;
       createApp({
         data() {
           return {
-            message: "apel",
+            student: {
+                name: null,
+                phone: null,
+                gurdian_phone: null,
+                email: null,
+                gender: null,
+                course: null,
+                year: null,
+                home_town: null,
+                college: "",
+            },
+           homeTowns: homeTownLIst,
+           colleges: collegeList,
+           courses: courseList,
+           academicYears: academicYearList,
           };
         },
+        methods:{
+            submitForm(){
+            axios.defaults.xsrfCookieName = "csrftoken";
+            axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
+            axios
+              .post("http://127.0.0.1:8000/student/create/", this.student)
+              .then((response) => {
+                console.log("then");
+                console.log(response);
+              })
+              .catch((error) => {
+                console.log("catch block");
+                console.log(error);
+              });            
+            },
+                
+            },  
         delimiters: ["[[", "]]"],
       }).mount("#app");
     </script>
