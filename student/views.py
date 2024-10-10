@@ -7,6 +7,8 @@ from address.models import District, College
 from course.models import Course
 from .models import AcademicYear, Student
 import json
+from .forms import StudentModelForm
+from .serializers import StudentSerializer
 
 
 # Create your views here.
@@ -25,7 +27,7 @@ def student(request):
     academic_year_list = AcademicYear.objects.all().order_by(
         '-year').values('id', 'year')
 
-# {'name': 'adf', 'phone': 'ad', 'gurdian_phone': 'ad', 'email': 'admin@mail.com', 'gender': 'M', 'course': 1, 'year': 2, 'home_town': 1, 'college': 1}
+    # {'name': 'adf', 'phone': 'ad', 'gurdian_phone': 'ad', 'email': 'admin@mail.com', 'gender': 'M', 'course': 1, 'year': 2, 'home_town': 1, 'college': 1}
     if request.method == 'POST':
         data = json.loads(request.body)
         if data['course']:
@@ -54,9 +56,17 @@ def student(request):
         else:
             data['college'] = None
 
-        print(data)
         data.pop('course')
-        Student.objects.create(**data)
+
+        a = {"namae": "apel"}
+
+        serializer_data = StudentSerializer(data=a)
+        if serializer_data.is_valid():
+            print(serializer_data.data)
+        else:
+            print(serializer_data.errors)
+
+       # Student.objects.create(**data)
         return HttpResponse("apel")
 
     context = {
