@@ -58,11 +58,12 @@ class StudentEnroll(models.Model):
     # created_by = models.ForeignKey(User, null=True, blank=True)
 
     def __str__(self):
-        return self.course
+        return self.course.name
 
 
 class Payment(models.Model):
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    student = models.ForeignKey(
+        Student, on_delete=models.CASCADE, related_name='payments')
     fee_type = models.CharField(max_length=100)
     course = models.ForeignKey(
         Course, null=True, blank=True, on_delete=models.CASCADE)

@@ -6,152 +6,268 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    {% block css %}
-    {% endblock css %}
+    {% block css %} {% endblock css %}
   </head>
   <body>
     {% block content %}
 
     <div id="app" class="container">
-          <div class="row student_create">
-            <!-- Start form -->
-            <form class="row gx-2 gy-3" @submit.prevent="submitForm">
-              <div class="col-3">
-                <label for="name" class="form-label">Name *</label>
-                <input type="text" name="name" v-model="student.name" class="form-control" id="name" />
-              </div>
-              <div class="col-3">
-                <label for="phone" class="form-label">Phone *</label>
-                <input
-                  type="text"
-                  name="phone"
-                  v-model="student.phone"
-                  class="form-control"
-                  id="phone"
-                />
-              </div>
-              <div class="col-3">
-                <label for="ParentsPhone" class="form-label"
-                  >Gurdian Phone</label
-                >
-                <input
-                  type="text"
-                  name="gurdian_phone"
-                  v-model="student.gurdian_phone"
-                  class="form-control"
-                  id="ParentsPhone"
-                />
-              </div>
-              <div class="col-3">
-                <label for="email" class="form-label">Email</label>
-                <input
-                  type="email"
-                  v-model="student.email"
-                  name="email"
-                  class="form-control"
-                  id="email"
-                />
-              </div>
-              <div class="col-3">
-                <label for="gender" class="form-label">Gender *</label>
-                <select class="form-select" v-model="student.gender"
-                  name="gender" id="gender">
-                  <option disabled value="null">Select Gender</option>
-                  <option value="M">Male</option>
-                  <option value="F">Female</option>
-                </select>
-              </div>
-              <div class="col-3">
-                <label for="location" class="form-label">Course</label>
-                <select class="form-select" v-model="student.course" name="course" id="location">
-                  <option disabled value=""> Select Course</option>
-                  <option v-for="course in courses" :key="course.id" :value="course.id">[[course.name]]</option>                  
-                </select>
-              </div>
-              <div class="col-3">
-                <label for="academicYear" class="form-label"
-                  >Acdemic Year</label
-                >
-                <select
-                  class="form-select"
-                  name="year"
-                  v-model="student.year"
-                  id="academicYear"
-                >
-                <option disabled value="">Select College</option>
-                <option v-for="year in academicYears" :key="year.id" :value="year.id">HSC Batch - [[year.year]]</option>    
-        
-                </select>
-              </div>
-              <div class="col-3">
-                <label for="location" class="form-label">Home Town</label>
-                <select class="form-select" name="home_town" v-model="student.home_town" id="location">
-                    <option disabled value="">Select Home Town</option>
-                    <option v-for="town in homeTowns" :key="town.id" :value="town.id">[[town.name]]</option>
-                </select>
-              </div>
-              <div class="col-3">
-                <label for="college" class="form-label">College</label>
-                <select class="form-select" name="college" v-model="student.college" id="college">
-                  <option disabled value>Select College</option>
-                    <option v-for="college in colleges" :key="college.id" :value="college.id">[[college.name]]</option>
-
-                </select>
-              </div>
-              <div class="col-12">
-                <button type="reset" class="btn btn-danger">Reset</button>
-                <button type="submit" class="btn btn-primary">Submit</button>
-              </div>
-            </form>
-
-            <!-- End Form -->
+      <!--Student create form-->
+      <div class="row student_create">
+        <!-- Start form -->
+        <form class="row gx-2 gy-3" @submit.prevent="submitForm">
+          <div class="col-3">
+            <label for="name" class="form-label">Name *</label>
+            <input
+              type="text"
+              name="name"
+              v-model="student.name"
+              class="form-control"
+              id="name"
+            />
           </div>
-    
+          <div class="col-3">
+            <label for="phone" class="form-label">Phone *</label>
+            <input
+              type="text"
+              name="phone"
+              v-model="student.phone"
+              class="form-control"
+              id="phone"
+            />
+          </div>
+          <div class="col-3">
+            <label for="ParentsPhone" class="form-label">Gurdian Phone</label>
+            <input
+              type="text"
+              name="gurdian_phone"
+              v-model="student.gurdian_phone"
+              class="form-control"
+              id="ParentsPhone"
+            />
+          </div>
+          <div class="col-3">
+            <label for="email" class="form-label">Email</label>
+            <input
+              type="email"
+              v-model="student.email"
+              name="email"
+              class="form-control"
+              id="email"
+            />
+          </div>
+          <div class="col-3">
+            <label for="gender" class="form-label">Gender *</label>
+            <select
+              class="form-select"
+              v-model="student.gender"
+              name="gender"
+              id="gender"
+            >
+              <option disabled value="null">Select Gender</option>
+              <option value="M">Male</option>
+              <option value="F">Female</option>
+            </select>
+          </div>
+          <div class="col-3">
+            <label for="location" class="form-label">Course</label>
+            <select
+              class="form-select"
+              v-model="student.course"
+              name="course"
+              id="location"
+            >
+              <option disabled value="null">Select Course</option>
+              <option
+                v-for="course in courses"
+                :key="course.id"
+                :value="course.id"
+              >
+                [[course.name]]
+              </option>
+            </select>
+          </div>
+          <div class="col-3">
+            <label for="academicYear" class="form-label">Acdemic Year</label>
+            <select
+              class="form-select"
+              name="hsc_batch"
+              v-model="student.hsc_batch"
+              id="academicYear"
+            >
+              <option disabled value="null">Select College</option>
+              <option
+                v-for="year in academicYears"
+                :key="year.id"
+                :value="year.id"
+              >
+                HSC Batch - [[year.hsc_batch]]
+              </option>
+            </select>
+          </div>
+          <div class="col-3">
+            <label for="location" class="form-label">Home Town</label>
+            <select
+              class="form-select"
+              name="home_town"
+              v-model="student.home_town"
+              id="location"
+            >
+              <option disabled value="null">Select Home Town</option>
+              <option v-for="town in homeTowns" :key="town.id" :value="town.id">
+                [[town.name]]
+              </option>
+            </select>
+          </div>
+          <div class="col-3">
+            <label for="college" class="form-label">College</label>
+            <select
+              class="form-select"
+              name="college"
+              v-model="student.college"
+              id="college"
+            >
+              <option disabled value="null">Select College</option>
+              <option
+                v-for="college in colleges"
+                :key="college.id"
+                :value="college.id"
+              >
+                [[college.name]]
+              </option>
+            </select>
+          </div>
+          <div class="col-12">
+            <button type="reset" class="btn btn-danger">Reset</button>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </div>
+        </form>
+
+        <!-- End Form -->
+      </div>
+
+      <!--Student Table-->
+
+      <div class="row mt-5">
+        <table
+          class="table table-light table-striped table-hover table-bordered table-sm"
+        >
+          <thead class="table-dark">
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Name</th>
+              <th scope="col">Acdemic Year</th>
+              <th scope="col">Due Amount</th>
+              <th scope="col">Paid This Month</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="i in studentsList " :key="i.id">
+              <th scope="row">1</th>
+
+              <th>[[i.name]]</th>
+              <th>[[i.hsc_batch]]</th>
+              <th>100</th>
+              <th>Yes</th>
+              <th>
+                <div class="btn-group" role="group">
+                  <button
+                    type="button"
+                    class="btn btn-primary dropdown-toggle"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    Dropdown
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><a href="#" class="dropdown-item">Make Payment</a></li>
+                    <hr />
+                    <li>
+                      <a href="#" class="dropdown-item">Payment History</a>
+                    </li>
+                    <hr />
+                    <li><a href="#" class="dropdown-item">Assign Course</a></li>
+                    <hr />
+                    <li>
+                      <a href="#" class="dropdown-item">Assign Material</a>
+                    </li>
+                    <hr />
+                    <li>
+                      <a href="#" class="dropdown-item">Receive Material</a>
+                    </li>
+                  </ul>
+                </div>
+              </th>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
     {% endblock content %} {% block script %}
     <script>
-     const homeTownLIst = JSON.parse("{{home_town_list|escapejs}}");
-     const collegeList = JSON.parse("{{college_list|escapejs}}");
-     const courseList = JSON.parse("{{course_list|escapejs}}");
-     const academicYearList = JSON.parse("{{academic_year_list|escapejs}}");
+      const homeTownLIst = JSON.parse("{{home_town_list|escapejs}}");
+      const collegeList = JSON.parse("{{college_list|escapejs}}");
+      const courseList = JSON.parse("{{course_list|escapejs}}");
+      const academicYearList = JSON.parse("{{academic_year_list|escapejs}}");
 
       const { createApp } = Vue;
       createApp({
+        mounted() {
+          this.getAllStudent();
+        },
         data() {
           return {
             student: {
-                name: null,
-                phone: null,
-                gurdian_phone: null,
-                email: null,
-                gender: null,
-                course: null,
-                year: null,
-                home_town: null,
-                college: "",
+              name: null,
+              phone: null,
+              gurdian_phone: null,
+              email: null,
+              gender: null,
+              course: null,
+              hsc_batch: null,
+              home_town: null,
+              college: "",
             },
-           homeTowns: homeTownLIst,
-           colleges: collegeList,
-           courses: courseList,
-           academicYears: academicYearList,
+            homeTowns: homeTownLIst,
+            colleges: collegeList,
+            courses: courseList,
+            academicYears: academicYearList,
+            studentsList: null,
           };
         },
-        methods:{
-            submitForm(){
+        methods: {
+          submitForm() {
             axios.defaults.xsrfCookieName = "csrftoken";
             axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
             axios
-              .post("http://127.0.0.1:8000/student/create/", this.student)
+              .post("http://127.0.0.1:8000/student/test/", this.student)
               .then((response) => {
-                console.log("then");
-                console.log(response);
+                console.log(response.data);
+                this.getAllStudent();
               })
               .catch((error) => {
                 console.log("catch block");
                 console.log(error);
-              });            
-            },
-                
-            },  
+              });
+          },
+
+          getAllStudent() {
+            axios.defaults.xsrfCookieName = "csrftoken";
+            axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
+            axios
+              .get("http://127.0.0.1:8000/student/all/")
+              .then((response) => {
+                this.studentsList = response.data;
+                console.log(this.studentsList);
+              })
+              .catch((error) => {
+                console.log("catch block");
+                console.log(error);
+              });
+          },
+        },
         delimiters: ["[[", "]]"],
       }).mount("#app");
     </script>

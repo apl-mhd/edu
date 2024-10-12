@@ -1,11 +1,16 @@
 from rest_framework import serializers
+from .models import Student
 
 
+# class A(serializers.ModelSerializer):
+#     class Meta:
 
-class StudentSerializer(serializers.Serializer):
-    name = serializers.CharField()
+
+class StudentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Student
+        fields = '__all__'
 
 
-class StudentModelSerializer(serializers.Serializer):
-    name = serializers.CharField()
-    
+# class StudentSerializer(serializers.Serializer):
+#     name = serializers.CharField()
