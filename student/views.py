@@ -5,7 +5,7 @@ import os
 from address.models import District, College
 from course.models import Course
 from .models import AcademicYear, Student
-from course.models import StudentEnroll, Payment
+from course.models import StudentBilling
 import json
 from .serializers import StudentSerializer
 from rest_framework.response import Response

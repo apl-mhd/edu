@@ -40,7 +40,7 @@ class Student(models.Model):
     address = models.TextField(max_length=255, blank=True, null=True)
     remark = models.TextField(max_length=255, blank=True, null=True)
     status = models.BooleanField(default=True)
-    crated_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
