@@ -21,6 +21,7 @@
             <input
               type="text"
               name="name"
+              placeholder="Mahmud"
               v-model="student.name"
               class="form-control"
               id="name"
@@ -31,6 +32,7 @@
             <input
               type="text"
               name="phone"
+              placeholder="015-xx-xx-xx-xx"
               v-model="student.phone"
               class="form-control"
               id="phone"
@@ -41,6 +43,7 @@
             <input
               type="text"
               name="gurdian_phone"
+              placeholder="017-xx-xx-xx-xx"
               v-model="student.gurdian_phone"
               class="form-control"
               id="ParentsPhone"
@@ -50,6 +53,7 @@
             <label for="email" class="form-label">Email</label>
             <input
               type="email"
+              placeholder="contact@mail.com"
               v-model="student.email"
               name="email"
               class="form-control"
@@ -88,14 +92,14 @@
             </select>
           </div>
           <div class="col-3">
-            <label for="academicYear" class="form-label">Acdemic Year</label>
+            <label for="academicYear" class="form-label">HSC Batch *</label>
             <select
               class="form-select"
               name="hsc_batch"
               v-model="student.hsc_batch"
               id="academicYear"
             >
-              <option disabled value="null">Select College</option>
+              <option disabled value="null">Select Batch</option>
               <option
                 v-for="year in academicYears"
                 :key="year.id"
@@ -138,7 +142,9 @@
             </select>
           </div>
           <div class="col-12">
-            <button type="reset" class="btn btn-danger">Reset</button>
+            <button type="reset" class="btn btn-danger" @click="resetForm">
+              Reset
+            </button>
             <button type="submit" class="btn btn-primary">Submit</button>
           </div>
         </form>
@@ -156,18 +162,18 @@
             <tr>
               <th scope="col">ID</th>
               <th scope="col">Name</th>
-              <th scope="col">HSC Bathc</th>
+              <th scope="col">HSC Batch</th>
               <th scope="col">Due Amount</th>
               <th scope="col">Paid This Month</th>
               <th scope="col">Action</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="i in studentsList " :key="i.id">
-              <th scope="row">1</th>
+            <tr v-for="(i, index) in studentsList" :key="i.id">
+              <th scope="row">[[index+1]]</th>
 
               <th>[[i.name]]</th>
-              <th>[[i.hsc_batch__year]]- [[i.hsc_batch__year+1]]</th>
+              <th>[[i.hsc_batch__year]] - [[i.hsc_batch__year+1]]</th>
               <th>[[i.due_amount ? i.due_amount: 0 ]]</th>
               <th>[[i.paid_current_month]]</th>
               <th>
@@ -213,7 +219,7 @@
         </table>
       </div>
 
-      <!--Make Paymey modal-->
+      <!--Make Payment modal-->
       <div
         class="modal fade"
         id="paymentModal"
@@ -304,6 +310,17 @@
         },
         data() {
           return {
+            blankForm: {
+              name: null,
+              phone: null,
+              gurdian_phone: null,
+              email: null,
+              gender: null,
+              course: null,
+              hsc_batch: null,
+              home_town: null,
+              college: null,
+            },
             student: {
               name: null,
               phone: null,
@@ -313,7 +330,7 @@
               course: null,
               hsc_batch: null,
               home_town: null,
-              college: "",
+              college: null,
             },
             homeTowns: homeTownLIst,
             colleges: collegeList,
@@ -321,9 +338,13 @@
             academicYears: academicYearList,
             studentsList: null,
             studentTableRow: {},
+            rowCount: 1,
           };
         },
         methods: {
+          resetForm() {
+            this.student = { ...this.blankForm };
+          },
           submitForm() {
             axios.defaults.xsrfCookieName = "csrftoken";
             axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
@@ -331,6 +352,7 @@
               .post("http://127.0.0.1:8000/student/test/", this.student)
               .then((response) => {
                 this.getAllStudent();
+                this.resetForm();
               })
               .catch((error) => {
                 console.log(error);

@@ -4,18 +4,26 @@ from student.models import Student
 from django.contrib.auth.models import User
 from django.utils import timezone
 
-
-# #
 # # Create your models here.
 
 
 class Day(models.Model):
-    name = models.CharField(max_length=20)
+    DAYS_CHOICES = (
+        ('Mon', 'Monday'),
+        ('Tue', 'Tuesday'),
+        ('Wed', 'Wednesday'),
+        ('Thu', 'Thursday'),
+        ('Fri', 'Friday'),
+        ('Sat', 'Saturday'),
+        ('Sun', 'Sunday'),
+    )
+
+    name = models.CharField(max_length=20, choices=DAYS_CHOICES, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.name
+        return f"{self.name}"
 
 
 class Course(models.Model):
@@ -51,12 +59,17 @@ class Batch(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.name
+        for i in self.days__name:
+            print(i)
+        return f"{self.name} - From {self.start_time} To {self.end_time}"
 
 
 class StudentEnroll(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    student = models.ForeignKey(
+        Student, on_delete=models.CASCADE, null=True, blank=True)
+    batch = models.ForeignKey(
+        Batch, on_delete=models.CASCADE, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     # created_by = models.ForeignKey(User, null=True, blank=True)
