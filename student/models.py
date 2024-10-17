@@ -4,6 +4,9 @@ from address.models import College, District
 
 class AcademicYear(models.Model):
     year = models.IntegerField(unique=True)
+    status = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.year}"
@@ -11,6 +14,12 @@ class AcademicYear(models.Model):
 
 class HomeTown(models.Model):
     district = models.CharField(max_length=20)
+    status = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.district
 
 
 class Student(models.Model):

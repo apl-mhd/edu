@@ -5,6 +5,7 @@ from django.db import models
 
 class District(models.Model):
     name = models.CharField(max_length=50)
+    status = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -16,6 +17,7 @@ class College(models.Model):
     name = models.CharField(max_length=100)
     code = models.CharField(max_length=20, null=True, blank=True)
     district = models.ForeignKey(District, on_delete=models.CASCADE)
+    status = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

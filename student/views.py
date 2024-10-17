@@ -52,7 +52,7 @@ class StudentList(APIView):
                 When(Exists(current_month_payment_exists), then=Value('Yes')),
                 default=Value('No')
             )
-        ).values('id', 'name', 'hsc_batch__year', 'total_course_amount', 'total_discount', 'total_payment', 'paid_current_month', 'due_amount')
+        ).values('id', 'name', 'hsc_batch__year', 'total_course_amount', 'total_discount', 'total_payment', 'paid_current_month', 'due_amount').order_by('-id')
 
         # students = Student.objects.all()
 
@@ -95,8 +95,6 @@ def studentCreate(request):
         print(serializer_data.errors)
         return Response(serializer_data.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    return HttpResponse("apel")
-
 
 def index(request):
     district = District.objects.all()
@@ -109,7 +107,7 @@ def student(request):
     college_list = College.objects.all().values("id", "name")
     course_list = Course.objects.all().values("id", "name")
     academic_year_list = AcademicYear.objects.all().order_by(
-        '-hsc_batch').values('id', 'hsc_batch')
+        '-id').values('id', 'year')
 
     # {'name': 'adf', 'phone': 'ad', 'gurdian_phone': 'ad', 'email': 'admin@mail.com', 'gender': 'M', 'course': 1, 'hsc_batch': 2, 'home_town': 1, 'college': 1}
     if request.method == 'POST':
@@ -161,5 +159,7 @@ def student(request):
         'course_list': json.dumps(list(course_list)),
         'academic_year_list': json.dumps(list(academic_year_list)),
     }
+
+    print(list(academic_year_list))
 
     return render(request, 'student.html', context=context)

@@ -101,7 +101,7 @@
                 :key="year.id"
                 :value="year.id"
               >
-                HSC Batch - [[year.hsc_batch]]
+                HSC Batch [[year.year]] -[[year.year+1]]
               </option>
             </select>
           </div>
@@ -212,71 +212,78 @@
           </tbody>
         </table>
       </div>
-    </div>
 
-    <div
-      class="modal fade"
-      id="paymentModal"
-      tabindex="-1"
-      aria-labelledby="paymentModalLable"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title fs-5" id="paymentModalLable">
-              ID# [[studentTableRow]] --- Name: Apel Mahmud
-            </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <form action="">
-              <div class="row mb-3">
-                <div class="col">
-                  <label for="courseFee" class="col-form-label"
-                    >Due Amount</label
-                  >
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="courseFee"
-                    disabled
-                    value="1000"
-                  />
+      <!--Make Paymey modal-->
+      <div
+        class="modal fade"
+        id="paymentModal"
+        tabindex="-1"
+        aria-labelledby="paymentModalLable"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title fs-5" id="paymentModalLable">
+                Payment of ID# [[studentTableRow.id]] --- Name:
+                [[studentTableRow.name]]
+              </h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <form action="">
+                <div class="row mb-3">
+                  <div class="col">
+                    <label for="courseFee" class="col-form-label"
+                      >Due Amount</label
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="courseFee"
+                      disabled
+                      :value="studentTableRow.due_amount"
+                    />
+                  </div>
+                  <div class="col">
+                    <label for="payment" class="col-form-label"
+                      >Payment Amount</label
+                    >
+                    <input
+                      min="1"
+                      type="text"
+                      class="form-control"
+                      id="payment"
+                    />
+                  </div>
                 </div>
-                <div class="col">
-                  <label for="payment" class="col-form-label"
-                    >Payment Amount</label
-                  >
-                  <input type="text" class="form-control" id="payment" />
-                </div>
-              </div>
 
-              <div class="mb-3">
-                <button type="submit" class="btn btn-primary">Pay Now</button>
-              </div>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-primary"
-              data-bs-dismiss="modal"
-            >
-              Close
-            </button>
-            <button
-              type="button"
-              class="btn btn-primary"
-              data-bs-dismiss="modal"
-            >
-              Save Changes
-            </button>
+                <div class="mb-3">
+                  <button type="submit" class="btn btn-primary">Pay Now</button>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-primary"
+                data-bs-dismiss="modal"
+              >
+                Close
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary"
+                data-bs-dismiss="modal"
+              >
+                Save Changes
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -288,6 +295,7 @@
       const collegeList = JSON.parse("{{college_list|escapejs}}");
       const courseList = JSON.parse("{{course_list|escapejs}}");
       const academicYearList = JSON.parse("{{academic_year_list|escapejs}}");
+      console.log(academicYearList);
 
       const { createApp } = Vue;
       createApp({
@@ -312,7 +320,7 @@
             courses: courseList,
             academicYears: academicYearList,
             studentsList: null,
-            studentTableRow: null,
+            studentTableRow: {},
           };
         },
         methods: {
@@ -336,7 +344,6 @@
               .get("http://127.0.0.1:8000/student/all/")
               .then((response) => {
                 this.studentsList = response.data;
-                console.log(this.studentsList);
               })
               .catch((error) => {
                 console.log("catch block");

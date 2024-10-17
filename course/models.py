@@ -22,6 +22,7 @@ class Course(models.Model):
     name = models.CharField(max_length=100)
     code = models.CharField(max_length=20)
     price = models.DecimalField(max_digits=10, decimal_places=2)
+    status = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -45,6 +46,7 @@ class Batch(models.Model):
     days = models.ManyToManyField(Day)
     start_time = models.TimeField()
     end_time = models.TimeField()
+    status = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
