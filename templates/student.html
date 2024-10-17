@@ -15,7 +15,7 @@
       <!--Student create form-->
       <div class="row student_create">
         <!-- Start form -->
-        <form class="row gx-2 gy-3" @submit.prevent="submitForm">
+        <form class="row gx-2 gy-3" @submit.prevent="studentCreateForm">
           <div class="col-3">
             <label for="name" class="form-label">Name *</label>
             <input
@@ -242,7 +242,8 @@
               ></button>
             </div>
             <div class="modal-body">
-              <form action="">
+              <form @submit.prevent="submitPaymentForm">
+                <input type="text" hidden v-model="paymentFormData.id" />
                 <div class="row mb-3">
                   <div class="col">
                     <label for="courseFee" class="col-form-label"
@@ -264,31 +265,26 @@
                       min="1"
                       type="text"
                       class="form-control"
+                      v-model="paymentFormData.amount_payment"
                       id="payment"
                     />
                   </div>
                 </div>
 
                 <div class="mb-3">
+                  <button
+                    type="button"
+                    class="btn btn-danger"
+                    data-bs-dismiss="modal"
+                  >
+                    Close
+                  </button>
                   <button type="submit" class="btn btn-primary">Pay Now</button>
                 </div>
               </form>
             </div>
-            <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-primary"
-                data-bs-dismiss="modal"
-              >
-                Close
-              </button>
-              <button
-                type="button"
-                class="btn btn-primary"
-                data-bs-dismiss="modal"
-              >
-                Save Changes
-              </button>
+            <div class="footer">
+              <div class="alert alert-primary" role="alert">Payment done</div>
             </div>
           </div>
         </div>
@@ -310,7 +306,7 @@
         },
         data() {
           return {
-            blankForm: {
+            blankStudentForm: {
               name: null,
               phone: null,
               gurdian_phone: null,
@@ -320,6 +316,10 @@
               hsc_batch: null,
               home_town: null,
               college: null,
+            },
+            blankPaymentForm: {
+              student: null,
+              amount_payment: 0,
             },
             student: {
               name: null,
@@ -332,6 +332,10 @@
               home_town: null,
               college: null,
             },
+            paymentFormData: {
+              student: null,
+              amount_payment: 0,
+            },
             homeTowns: homeTownLIst,
             colleges: collegeList,
             courses: courseList,
@@ -343,9 +347,9 @@
         },
         methods: {
           resetForm() {
-            this.student = { ...this.blankForm };
+            this.student = { ...this.blankStudentForm };
           },
-          submitForm() {
+          studentCreateForm() {
             axios.defaults.xsrfCookieName = "csrftoken";
             axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
             axios
@@ -353,6 +357,23 @@
               .then((response) => {
                 this.getAllStudent();
                 this.resetForm();
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+          },
+
+          submitPaymentForm() {
+            axios.defaults.xsrfCookieName = "csrftoken";
+            axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
+            axios
+              .post(
+                "http://127.0.0.1:8000/course/payment/",
+                this.paymentFormData
+              )
+              .then((response) => {
+                this.paymentFormData = { ...this.blankPaymentForm };
+                this.getAllStudent();
               })
               .catch((error) => {
                 console.log(error);
@@ -374,6 +395,7 @@
           },
           studentPaymentData(i) {
             this.studentTableRow = i;
+            this.paymentFormData.student = i.id;
           },
         },
         delimiters: ["[[", "]]"],
