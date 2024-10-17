@@ -2,6 +2,7 @@ from django.conf import settings
 from django.db import models
 from student.models import Student
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 
 # #
@@ -64,17 +65,14 @@ class StudentEnroll(models.Model):
 
 class StudentBilling(models.Model):
     student = models.ForeignKey(
-        Student, on_delete=models.CASCADE, related_name='payments')
+        Student, on_delete=models.CASCADE, related_name='billing')
     fee_type = models.CharField(max_length=100)
     course = models.ForeignKey(
         Course, null=True, blank=True, on_delete=models.CASCADE)
     course_amount = models.DecimalField(
-        max_digits=10, decimal_places=2, null=True, blank=True)
+        max_digits=10, decimal_places=2, default=0)
     discount = models.DecimalField(
-        max_digits=10, decimal_places=2, null=True, blank=True)
-    payment = models.IntegerField(
-        null=True, blank=True)
-
+        max_digits=10, decimal_places=2, default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -101,9 +99,9 @@ class Payment(models.Model):
     ]
 
     student = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+        Student, on_delete=models.CASCADE, related_name='payments')
     amount_payment = models.DecimalField(max_digits=10, decimal_places=2)
-    payment_date = models.DateTimeField(auto_now_add=True)
+    payment_date = models.DateTimeField(default=timezone.now)
     payment_type = models.CharField(
         max_length=20, choices=PAYMENT_TYPES, null=True, blank=True, default='tuition')
     payment_method = models.CharField(

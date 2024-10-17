@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from pathlib import Path
 import os
 from address.models import District, College
-from course.models import Course
+from course.models import Course, Payment
 from .models import AcademicYear, Student
 from course.models import StudentBilling
 import json
@@ -13,23 +13,52 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 # Create your views here.
+from django.db.models import Subquery, Sum, OuterRef, When, Case, Exists, Value, F
+from django.utils import timezone
 
 
 class StudentList(APIView):
     def get(self, requst, *args, **kwargs):
-        students = Student.objects.all()
-        a = Student.objects.values(
-            "id", "name", "hsc_batch__year", "gender").all()
 
-        payment = Student.objects.prefetch_related('payments').values()
-        print(payment[0])
+        current_month = timezone.now().replace(
+            day=1)
 
-        # for i in payment:
-        #     for j in i.payments.all():
-        #         print(j)
+        current_month_payment_exists = Payment.objects.filter(
+            student=OuterRef('pk'),
+            payment_date__month=current_month.month,
+            payment_date__year=current_month.year
+        ).values('id')
 
-        serializer = StudentSerializer(students, many=True)
-        return Response(serializer.data)
+        students = Student.objects.annotate(
+            total_course_amount=Subquery(
+                StudentBilling.objects.filter(student=OuterRef('pk')).values('student').annotate(
+                    total=Sum('course_amount')
+                ).values('total')
+            ),
+            total_discount=Subquery(
+                StudentBilling.objects.filter(student=OuterRef('pk')).values('student').annotate(
+                    total=Sum('discount')
+                ).values('total')
+            ),
+            total_payment=Subquery(
+                Payment.objects.filter(student=OuterRef('pk')).values('student').annotate(
+                    total=Sum('amount_payment')
+                ).values('total')
+            ),
+            due_amount=F('total_course_amount') -
+            F('total_discount') - F('total_payment'),
+
+            paid_current_month=Case(
+                When(Exists(current_month_payment_exists), then=Value('Yes')),
+                default=Value('No')
+            )
+        ).values('id', 'name', 'hsc_batch__year', 'total_course_amount', 'total_discount', 'total_payment', 'paid_current_month', 'due_amount')
+
+        # students = Student.objects.all()
+
+        # serializer = StudentSerializer(students, many=True)
+        data = students
+        return Response(data)
 
 
 class StudentView(APIView):

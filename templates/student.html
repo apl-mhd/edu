@@ -156,7 +156,7 @@
             <tr>
               <th scope="col">ID</th>
               <th scope="col">Name</th>
-              <th scope="col">Acdemic Year</th>
+              <th scope="col">HSC Bathc</th>
               <th scope="col">Due Amount</th>
               <th scope="col">Paid This Month</th>
               <th scope="col">Action</th>
@@ -167,9 +167,9 @@
               <th scope="row">1</th>
 
               <th>[[i.name]]</th>
-              <th>[[i.hsc_batch]]</th>
-              <th>100</th>
-              <th>Yes</th>
+              <th>[[i.hsc_batch__year]]- [[i.hsc_batch__year+1]]</th>
+              <th>[[i.due_amount ? i.due_amount: 0 ]]</th>
+              <th>[[i.paid_current_month]]</th>
               <th>
                 <div class="btn-group" role="group">
                   <button
@@ -181,7 +181,16 @@
                     Dropdown
                   </button>
                   <ul class="dropdown-menu">
-                    <li><a href="#" class="dropdown-item">Make Payment</a></li>
+                    <li>
+                      <a
+                        href="#"
+                        class="dropdown-item"
+                        data-bs-toggle="modal"
+                        data-bs-target="#paymentModal"
+                        @click="studentPaymentData(i)"
+                        >Make Payment</a
+                      >
+                    </li>
                     <hr />
                     <li>
                       <a href="#" class="dropdown-item">Payment History</a>
@@ -202,6 +211,74 @@
             </tr>
           </tbody>
         </table>
+      </div>
+    </div>
+
+    <div
+      class="modal fade"
+      id="paymentModal"
+      tabindex="-1"
+      aria-labelledby="paymentModalLable"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title fs-5" id="paymentModalLable">
+              ID# [[studentTableRow]] --- Name: Apel Mahmud
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form action="">
+              <div class="row mb-3">
+                <div class="col">
+                  <label for="courseFee" class="col-form-label"
+                    >Due Amount</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="courseFee"
+                    disabled
+                    value="1000"
+                  />
+                </div>
+                <div class="col">
+                  <label for="payment" class="col-form-label"
+                    >Payment Amount</label
+                  >
+                  <input type="text" class="form-control" id="payment" />
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <button type="submit" class="btn btn-primary">Pay Now</button>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-primary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              data-bs-dismiss="modal"
+            >
+              Save Changes
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -235,6 +312,7 @@
             courses: courseList,
             academicYears: academicYearList,
             studentsList: null,
+            studentTableRow: null,
           };
         },
         methods: {
@@ -244,11 +322,9 @@
             axios
               .post("http://127.0.0.1:8000/student/test/", this.student)
               .then((response) => {
-                console.log(response.data);
                 this.getAllStudent();
               })
               .catch((error) => {
-                console.log("catch block");
                 console.log(error);
               });
           },
@@ -266,6 +342,9 @@
                 console.log("catch block");
                 console.log(error);
               });
+          },
+          studentPaymentData(i) {
+            this.studentTableRow = i;
           },
         },
         delimiters: ["[[", "]]"],
