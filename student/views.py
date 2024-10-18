@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from pathlib import Path
 import os
 from address.models import District, College
-from course.models import Course, Payment
+from course.models import Course, Payment, Batch
 from .models import AcademicYear, Student
 from course.models import StudentBilling
 import json
@@ -51,7 +51,8 @@ class StudentList(APIView):
             paid_current_month=Case(
                 When(Exists(current_month_payment_exists), then=Value('Yes')),
                 default=Value('No')
-            )
+            ),
+
         ).values('id', 'name', 'hsc_batch__year', 'total_course_amount', 'total_discount', 'total_payment', 'paid_current_month', 'due_amount').order_by('-id')
 
         # students = Student.objects.all()
@@ -105,61 +106,69 @@ def index(request):
 def student(request):
     district_list = District.objects.all().values("id", "name")
     college_list = College.objects.all().values("id", "name")
-    course_list = Course.objects.all().values("id", "name")
+    course_list = Course.objects.all().values("id", "name", "price")
     academic_year_list = AcademicYear.objects.all().order_by(
         '-id').values('id', 'year')
+    batch = Batch.objects.prefetch_related('days').all()
 
-    # {'name': 'adf', 'phone': 'ad', 'gurdian_phone': 'ad', 'email': 'admin@mail.com', 'gender': 'M', 'course': 1, 'hsc_batch': 2, 'home_town': 1, 'college': 1}
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        if data['course']:
-            data['course'] = Course.objects.filter(id=data['course']).first()
+    batch_list = []
+    for i in batch:
+        day_name = f"{i.name}"
+        for j in i.days.all():
+            day_name += j.name+"-"
 
-        else:
-            data['course'] = None
+        day_name = f"{day_name}{i.start_time.strftime('%H:%M')} to {i.end_time.strftime('%H:%M')}"
+        batch_list.append({"id": i.id, "title": day_name})
 
-        if data['hsc_batch']:
-            data['hsc_batch'] = AcademicYear.objects.filter(
-                id=data['hsc_batch']).first()
+    # if request.method == 'POST':
+    #     data = json.loads(request.body)
+    #     if data['course']:
+    #         data['course'] = Course.objects.filter(id=data['course']).first()
 
-        else:
-            data['hsc_batch'] = None
+    #     else:
+    #         data['course'] = None
 
-        if data['home_town']:
-            data['home_town'] = District.objects.filter(
-                id=data['home_town']).first()
-        else:
-            data['home_town'] = None
+    #     if data['hsc_batch']:
+    #         data['hsc_batch'] = AcademicYear.objects.filter(
+    #             id=data['hsc_batch']).first()
 
-        if data['college']:
-            data['college'] = College.objects.filter(
-                id=data['college']).first()
+    #     else:
+    #         data['hsc_batch'] = None
 
-        else:
-            data['college'] = None
+    #     if data['home_town']:
+    #         data['home_town'] = District.objects.filter(
+    #             id=data['home_town']).first()
+    #     else:
+    #         data['home_town'] = None
 
-        data.pop('course')
+    #     if data['college']:
+    #         data['college'] = College.objects.filter(
+    #             id=data['college']).first()
 
-        a = {"name": "apel", "x": "y"}
+    #     else:
+    #         data['college'] = None
 
-        serializer_data = StudentSerializer(data=a)
-        if serializer_data.is_valid():
-            print("ifaa")
-            print(serializer_data.validated_data)
-        else:
-            print("else")
-            print(serializer_data.errors)
-            return Response(serializer_data.errors, status=status.HTTP_400_BAD_REQUEST)
+    #     data.pop('course')
 
-        return HttpResponse("apel")
+    #     a = {"name": "apel", "x": "y"}
+
+    #     serializer_data = StudentSerializer(data=a)
+    #     if serializer_data.is_valid():
+    #         print("ifaa")
+    #         print(serializer_data.validated_data)
+    #     else:
+    #         print("else")
+    #         print(serializer_data.errors)
+    #         return Response(serializer_data.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    #     return HttpResponse("apel")
 
     context = {
         'home_town_list': json.dumps(list(district_list)),
         'college_list': json.dumps(list(college_list)),
         'course_list': json.dumps(list(course_list)),
         'academic_year_list': json.dumps(list(academic_year_list)),
+        'batch_list': json.dumps(list(batch_list)),
     }
-
-    print(list(academic_year_list))
 
     return render(request, 'student.html', context=context)

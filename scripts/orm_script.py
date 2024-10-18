@@ -7,41 +7,55 @@ from django.db import connection
 
 def run():
 
-    current_month = timezone.now().replace(
-        day=1)
+    batch = Batch.objects.prefetch_related('days').all()
 
-    current_month_payment_exists = Payment.objects.filter(
-        student=OuterRef('pk'),
-        payment_date__month=current_month.month,
-        payment_date__year=current_month.year
-    ).values('id')
+    data = []
+    for i in batch:
+        day_name = ''
+        for j in i.days.all():
+            day_name += j.name+"-"
 
-    students = Student.objects.select_related('hsc_batch').annotate(
-        total_course_amount=Subquery(
-            StudentBilling.objects.filter(student=OuterRef('pk')).values('student').annotate(
-                total=Sum('course_amount', default=0)
-            ).values('total')
-        ),
-        total_discount=Subquery(
-            StudentBilling.objects.filter(student=OuterRef('pk')).values('student').annotate(
-                total=Sum('discount', default=0)
-            ).values('total')
-        ),
-        total_payment=Subquery(
-            Payment.objects.filter(student=OuterRef('pk')).values('student').annotate(
-                total=Sum('amount_payment', default=0)
-            ).values('total')
-        ),
-        paid_current_month=Case(
-            When(Exists(current_month_payment_exists), then=Value('Yes')),
-            default=Value('No')
-        ),
-        due_amount=F('total_course_amount') -
-        F('total_discount') - F('total_payment')
+        day_name = f"{day_name}{i.start_time.strftime('%H:%M')} to {i.end_time.strftime('%H:%M')}"
+        data.append({"id": i.id, "day_name": day_name})
+    print(data)
+    # print(dict(Day.DAYS_CHOICES))
+    # print(batch[0].days.all()[0].name)
 
-    ).values('id', 'name', 'hsc_batch__year', 'total_course_amount', 'total_discount', 'total_payment', 'paid_current_month', 'due_amount')
+    # current_month = timezone.now().replace(
+    #     day=1)
 
-    print(students)
+    # current_month_payment_exists = Payment.objects.filter(
+    #     student=OuterRef('pk'),
+    #     payment_date__month=current_month.month,
+    #     payment_date__year=current_month.year
+    # ).values('id')
+
+    # students = Student.objects.select_related('hsc_batch').annotate(
+    #     total_course_amount=Subquery(
+    #         StudentBilling.objects.filter(student=OuterRef('pk')).values('student').annotate(
+    #             total=Sum('course_amount', default=0)
+    #         ).values('total')
+    #     ),
+    #     total_discount=Subquery(
+    #         StudentBilling.objects.filter(student=OuterRef('pk')).values('student').annotate(
+    #             total=Sum('discount', default=0)
+    #         ).values('total')
+    #     ),
+    #     total_payment=Subquery(
+    #         Payment.objects.filter(student=OuterRef('pk')).values('student').annotate(
+    #             total=Sum('amount_payment', default=0)
+    #         ).values('total')
+    #     ),
+    #     paid_current_month=Case(
+    #         When(Exists(current_month_payment_exists), then=Value('Yes')),
+    #         default=Value('No')
+    #     ),
+    #     due_amount=F('total_course_amount') -
+    #     F('total_discount') - F('total_payment')
+
+    # ).values('id', 'name', 'hsc_batch__year', 'total_course_amount', 'total_discount', 'total_payment', 'paid_current_month', 'due_amount')
+
+    # print(students)
     # for i in students:
     #     print(f"{i.id} --- {i.name} --- {i.total_course_amount} ---- {i.total_discount} --- {i.total_payment}")
 

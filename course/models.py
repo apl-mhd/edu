@@ -29,7 +29,7 @@ class Day(models.Model):
 class Course(models.Model):
     name = models.CharField(max_length=100)
     code = models.CharField(max_length=20)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    price = models.IntegerField()
     status = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -37,21 +37,9 @@ class Course(models.Model):
     def __str__(self):
         return self.name
 
-
 class Batch(models.Model):
-
-    DAYS_CHOICES = (
-        ('Mon', 'Monday'),
-        ('Tue', 'Tuesday'),
-        ('Wed', 'Wednesday'),
-        ('Thu', 'Thursday'),
-        ('Fri', 'Friday'),
-        ('Sat', 'Saturday'),
-        ('Sun', 'Sunday'),
-    )
-
     name = models.CharField(max_length=50)
-    days = models.ManyToManyField(Day)
+    days = models.ManyToManyField(Day, related_name='days')
     start_time = models.TimeField()
     end_time = models.TimeField()
     status = models.BooleanField(default=True)
@@ -59,8 +47,6 @@ class Batch(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        for i in self.days__name:
-            print(i)
         return f"{self.name} - From {self.start_time} To {self.end_time}"
 
 
@@ -84,10 +70,8 @@ class StudentBilling(models.Model):
     fee_type = models.CharField(max_length=100)
     course = models.ForeignKey(
         Course, null=True, blank=True, on_delete=models.CASCADE)
-    course_amount = models.DecimalField(
-        max_digits=10, decimal_places=2, default=0)
-    discount = models.DecimalField(
-        max_digits=10, decimal_places=2, default=0)
+    course_amount = models.IntegerField(default=0)
+    discount = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -115,7 +99,7 @@ class Payment(models.Model):
 
     student = models.ForeignKey(
         Student, on_delete=models.CASCADE, related_name='payments')
-    amount_payment = models.DecimalField(max_digits=10, decimal_places=2)
+    amount_payment = models.IntegerField()
     payment_date = models.DateTimeField(default=timezone.now)
     payment_type = models.CharField(
         max_length=20, choices=PAYMENT_TYPES, null=True, blank=True, default='tuition')

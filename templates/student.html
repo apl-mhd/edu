@@ -74,12 +74,12 @@
             </select>
           </div>
           <div class="col-3">
-            <label for="location" class="form-label">Course</label>
+            <label for="studetn-course" class="form-label">Course</label>
             <select
               class="form-select"
               v-model="student.course"
               name="course"
-              id="location"
+              id="studetn-course"
             >
               <option disabled value="null">Select Course</option>
               <option
@@ -193,7 +193,7 @@
                         class="dropdown-item"
                         data-bs-toggle="modal"
                         data-bs-target="#paymentModal"
-                        @click="studentPaymentData(i)"
+                        @click="studentData(i)"
                         >Make Payment</a
                       >
                     </li>
@@ -202,7 +202,16 @@
                       <a href="#" class="dropdown-item">Payment History</a>
                     </li>
                     <hr />
-                    <li><a href="#" class="dropdown-item">Assign Course</a></li>
+                    <li>
+                      <a
+                        href="#"
+                        data-bs-toggle="modal"
+                        data-bs-target="#assignCourseModal"
+                        class="dropdown-item"
+                        @click="studentData(i)"
+                        >Assign Course</a
+                      >
+                    </li>
                     <hr />
                     <li>
                       <a href="#" class="dropdown-item">Assign Material</a>
@@ -243,7 +252,7 @@
             </div>
             <div class="modal-body">
               <form @submit.prevent="submitPaymentForm">
-                <input type="text" hidden v-model="paymentFormData.id" />
+                <input type="text" hidden v-model="paymentFormData.student" />
                 <div class="row mb-3">
                   <div class="col">
                     <label for="courseFee" class="col-form-label"
@@ -289,6 +298,119 @@
           </div>
         </div>
       </div>
+
+      <!--Assign Course-->
+      <div
+        class="modal fade"
+        id="assignCourseModal"
+        tabindex="-1"
+        aria-labelledby="assignCourseModalLable"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title fs-5" id="assignCourseModalLable">
+                Payment of ID# [[studentTableRow.id]] --- Name:
+                [[studentTableRow.name]]
+              </h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <form @submit.prevent="submitPaymentForm">
+                <input
+                  type="text"
+                  hidden
+                  v-model="courseAssignFormData.student"
+                />
+
+                <div class="row mb-3">
+                  <div class="col-md-12">
+                    <label for="course">Select Course</label>
+                    <select
+                      class="form-select"
+                      v-model="courseAssignFormData.course"
+                      name="course"
+                      id="course"
+                    >
+                      <option disabled value="null">Select Course</option>
+                      <option
+                        v-for="course in courses"
+                        :key="course.id"
+                        :value="course.id"
+                      >
+                        [[course.name]]-[[course.price]]
+                      </option>
+                    </select>
+                  </div>
+                  <div class="col-md-12 mt-3">
+                    <label for="course">Select Batch</label>
+                    <select
+                      class="form-select"
+                      v-model="courseAssignFormData.batch"
+                      name="course"
+                      id="course"
+                    >
+                      <option disabled value="null">Select Course</option>
+                      <option
+                        v-for="batch in batches"
+                        :key="batch.id"
+                        :value="batch.id"
+                      >
+                        [[batch.title]]
+                      </option>
+                    </select>
+                  </div>
+                  <div class="col mt-3">
+                    <label for="courseFee" class="col-form-label"
+                      >Discount Amount</label
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="courseFee"
+                      v-model="courseAssignFormData.discount"
+                    />
+                  </div>
+                  <div class="col mt-3">
+                    <label for="payment" class="col-form-label"
+                      >Payment Amount</label
+                    >
+                    <input
+                      min="1"
+                      type="text"
+                      class="form-control"
+                      v-model="courseAssignFormData.amount_payment"
+                      id="payment"
+                    />
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <button
+                    type="button"
+                    class="btn btn-danger"
+                    data-bs-dismiss="modal"
+                  >
+                    Close
+                  </button>
+                  <button type="submit" class="btn btn-primary">Pay Now</button>
+                </div>
+              </form>
+            </div>
+            <div class="footer">
+              <div class="alert alert-primary" role="alert">Payment done</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!--End #pp-->
     </div>
 
     {% endblock content %} {% block script %}
@@ -297,8 +419,7 @@
       const collegeList = JSON.parse("{{college_list|escapejs}}");
       const courseList = JSON.parse("{{course_list|escapejs}}");
       const academicYearList = JSON.parse("{{academic_year_list|escapejs}}");
-      console.log(academicYearList);
-
+      const batchList = JSON.parse("{{batch_list|escapejs}}");
       const { createApp } = Vue;
       createApp({
         mounted() {
@@ -321,6 +442,13 @@
               student: null,
               amount_payment: 0,
             },
+            blankAssignCourseForm: {
+              student: null,
+              course: null,
+              batch: null,
+              discount: 0,
+              amount_payment: 0,
+            },
             student: {
               name: null,
               phone: null,
@@ -336,10 +464,18 @@
               student: null,
               amount_payment: 0,
             },
+            courseAssignFormData: {
+              student: null,
+              course: null,
+              batch: null,
+              discount: 0,
+              amount_payment: 0,
+            },
             homeTowns: homeTownLIst,
             colleges: collegeList,
             courses: courseList,
             academicYears: academicYearList,
+            batches: batchList,
             studentsList: null,
             studentTableRow: {},
             rowCount: 1,
@@ -393,9 +529,10 @@
                 console.log(error);
               });
           },
-          studentPaymentData(i) {
+          studentData(i) {
             this.studentTableRow = i;
             this.paymentFormData.student = i.id;
+            this.courseAssignFormData.student = i.id;
           },
         },
         delimiters: ["[[", "]]"],
