@@ -322,7 +322,7 @@
               ></button>
             </div>
             <div class="modal-body">
-              <form @submit.prevent="submitPaymentForm">
+              <form @submit.prevent="courseAssignForm">
                 <input
                   type="text"
                   hidden
@@ -399,7 +399,7 @@
                   >
                     Close
                   </button>
-                  <button type="submit" class="btn btn-primary">Pay Now</button>
+                  <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
               </form>
             </div>
@@ -446,8 +446,8 @@
               student: null,
               course: null,
               batch: null,
-              discount: 0,
-              amount_payment: 0,
+              discount: null,
+              amount_payment: null,
             },
             student: {
               name: null,
@@ -468,8 +468,8 @@
               student: null,
               course: null,
               batch: null,
-              discount: 0,
-              amount_payment: 0,
+              discount: null,
+              amount_payment: null,
             },
             homeTowns: homeTownLIst,
             colleges: collegeList,
@@ -484,6 +484,21 @@
         methods: {
           resetForm() {
             this.student = { ...this.blankStudentForm };
+          },
+          courseAssignForm() {
+            axios.defaults.xsrfCookieName = "csrftoken";
+            axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
+            axios
+              .post(
+                "http://127.0.0.1:8000/course/course-assign/",
+                this.courseAssignFormData
+              )
+              .then((response) => {
+                this.getAllStudent();
+              })
+              .catch((error) => {
+                console.log(error);
+              });
           },
           studentCreateForm() {
             axios.defaults.xsrfCookieName = "csrftoken";

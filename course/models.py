@@ -3,6 +3,7 @@ from django.db import models
 from student.models import Student
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.core.validators import MinValueValidator
 
 # # Create your models here.
 
@@ -67,7 +68,7 @@ class StudentEnroll(models.Model):
 class StudentBilling(models.Model):
     student = models.ForeignKey(
         Student, on_delete=models.CASCADE, related_name='billing')
-    fee_type = models.CharField(max_length=100)
+    fee_type = models.CharField(max_length=100, null=True, blank=True)
     course = models.ForeignKey(
         Course, null=True, blank=True, on_delete=models.CASCADE)
     course_amount = models.IntegerField(default=0)
@@ -99,7 +100,7 @@ class Payment(models.Model):
 
     student = models.ForeignKey(
         Student, on_delete=models.CASCADE, related_name='payments')
-    amount_payment = models.IntegerField()
+    amount_payment = models.IntegerField(validators=[MinValueValidator(1)])
     payment_date = models.DateTimeField(default=timezone.now)
     payment_type = models.CharField(
         max_length=20, choices=PAYMENT_TYPES, null=True, blank=True, default='tuition')
