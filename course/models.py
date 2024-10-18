@@ -38,6 +38,7 @@ class Course(models.Model):
     def __str__(self):
         return self.name
 
+
 class Batch(models.Model):
     name = models.CharField(max_length=50)
     days = models.ManyToManyField(Day, related_name='days')
@@ -66,9 +67,20 @@ class StudentEnroll(models.Model):
 
 
 class StudentBilling(models.Model):
+
+    FEE_TYPES = [
+        ('tuition', 'Tuition Fee'),
+        ('course', 'course Fee'),
+        ('discount', 'Discount'),
+        ('exam', 'Exam Fee'),
+        ('material', 'Material Fee'),
+        ('other', 'Other'),
+    ]
+
     student = models.ForeignKey(
         Student, on_delete=models.CASCADE, related_name='billing')
-    fee_type = models.CharField(max_length=100, null=True, blank=True)
+    fee_type = models.CharField(
+        max_length=100, choices=FEE_TYPES, null=True, blank=True)
     course = models.ForeignKey(
         Course, null=True, blank=True, on_delete=models.CASCADE)
     course_amount = models.IntegerField(default=0)
