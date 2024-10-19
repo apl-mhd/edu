@@ -7,17 +7,20 @@ from django.db import connection
 
 def run():
 
-    batch = Batch.objects.prefetch_related('days').all()
+    enroll = StudentEnroll.objects.all().first()
+    print(enroll.get_section_details())
 
-    data = []
-    for i in batch:
-        day_name = ''
-        for j in i.days.all():
-            day_name += j.name+"-"
+    # batch = Batch.objects.prefetch_related('days').all()
 
-        day_name = f"{day_name}{i.start_time.strftime('%H:%M')} to {i.end_time.strftime('%H:%M')}"
-        data.append({"id": i.id, "day_name": day_name})
-    print(data)
+    # data = []
+    # for i in batch:
+    #     day_name = ''
+    #     for j in i.days.all():
+    #         day_name += j.name+"-"
+
+    #     day_name = f"{day_name}{i.start_time.strftime('%H:%M')} to {i.end_time.strftime('%H:%M')}"
+    #     data.append({"id": i.id, "day_name": day_name})
+    # print(data)
     # print(dict(Day.DAYS_CHOICES))
     # print(batch[0].days.all()[0].name)
 

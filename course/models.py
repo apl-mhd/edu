@@ -49,7 +49,14 @@ class Batch(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.name} - From {self.start_time} To {self.end_time}"
+        print(self.days.all())
+        day_names = ""
+        for day in self.days.all():
+            day_names += f"-{day.name}"
+
+        print(day_names)
+
+        return f"{self.name} {day_names}- From {self.start_time} To {self.end_time}"
 
 
 class StudentEnroll(models.Model):
@@ -64,6 +71,10 @@ class StudentEnroll(models.Model):
 
     def __str__(self):
         return self.course.name
+
+    def get_section_details(self):
+        print(self.batch)
+        return self.batch
 
 
 class StudentBilling(models.Model):
