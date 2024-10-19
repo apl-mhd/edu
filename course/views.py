@@ -10,8 +10,11 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 # Create your views here.
-from django.db.models import Subquery, Sum, OuterRef, When, Case, Exists, Value, F
+from django.db.models import Subquery, Sum, OuterRef, When, Case, Exists, Value, F, Q
 from django.utils import timezone
+from django.db import transaction
+from rest_framework.generics import ListAPIView
+from rest_framework.exceptions import NotFound
 
 
 class PaymentView(APIView):
@@ -66,3 +69,16 @@ class CourseAssingView(APIView):
     def get(self, requset, *args, **kwargs):
 
         return Response(data={"message": "success"}, status=status.HTTP_200_OK)
+
+
+class StudentPaymentListView(ListAPIView):
+
+    serializer_class = PaymentSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        studend_id = self.kwargs.get('id')
+        try:
+            return Payment.objects.filter(student=studend_id)
+
+        except Student.DoesNotExist:
+            raise NotFound(detail="Student not found")

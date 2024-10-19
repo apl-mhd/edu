@@ -16,6 +16,8 @@ from rest_framework.views import APIView
 from django.db.models import Subquery, Sum, OuterRef, When, Case, Exists, Value, F
 from django.utils import timezone
 
+from django.db.models.functions import Coalesce
+
 
 class StudentList(APIView):
     def get(self, requst, *args, **kwargs):
@@ -46,7 +48,8 @@ class StudentList(APIView):
                 ).values('total')
             ),
             due_amount=F('total_course_amount') -
-            F('total_discount') - F('total_payment'),
+            Coalesce(F('total_discount'), Value(0)) -
+            Coalesce(F('total_payment'), Value(0)),
 
             paid_current_month=Case(
                 When(Exists(current_month_payment_exists), then=Value('Yes')),

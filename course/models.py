@@ -92,7 +92,7 @@ class StudentBilling(models.Model):
     # created_by = models.ForeignKey(User, null=True, blank=True)
 
     def __str__(self):
-        return self.fee_type
+        return f"{self.student.name}-{self.course.name}-{self.course_amount}"
 
 
 class Payment(models.Model):
@@ -124,6 +124,9 @@ class Payment(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-id']
 
     def __str__(self):
         return f"{self.student} - {self.amount_payment} on {self.payment_date}"
