@@ -19,6 +19,10 @@ from django.utils import timezone
 from django.db.models.functions import Coalesce
 
 
+# class StudentFilter(APIView):
+
+
+
 class StudentList(APIView):
     def get(self, requst, *args, **kwargs):
 
@@ -70,7 +74,6 @@ class StudentView(APIView):
     def post(self, request, *args, **kwargs):
 
         try:
-            print(request.data.get("phone"))
             serializer_data = StudentSerializer(data=request.data)
             if serializer_data.is_valid():
                 serializer_data.save()
@@ -85,21 +88,7 @@ class StudentView(APIView):
             return Response({'status': 'failed', 'message': 'something went wrong'})
 
 
-@api_view(['POST'])
-def studentCreate(request):
-
-    a = {"name": "apel", "x": "y"}
-    serializer_data = StudentSerializer(data=a)
-    if serializer_data.is_valid():
-        print("if")
-        print(serializer_data.validated_data)
-        return Response(serializer_data.data)
-    else:
-        print("else")
-        print(serializer_data.errors)
-        return Response(serializer_data.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
+# Not needed
 def index(request):
     district = District.objects.all()
     print(district)
