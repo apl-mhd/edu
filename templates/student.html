@@ -7,6 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     {% block css %} {% endblock css %}
+    <style>
+      
+    </style>
   </head>
   <body>
     {% block content %}
@@ -169,16 +172,18 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(i, index) in studentsList" :key="i.id">
+            <tr v-for="(i, index) in studentsList" :key="i.id" :class="i.paid_current_month ? 'table-success': 'table-danger'">
               <th scope="row">[[index+1]]</th>
 
               <th>[[i.name]]</th>
               <th>[[i.hsc_batch__year]] - [[i.hsc_batch__year+1]]</th>
               <th>[[i.due_amount ? i.due_amount: 0 ]]</th>
               <th>
-                [[i.paid_current_month]]
-                <span @click="getPaymentHistory(i)" data-bs-toggle="modal"
-                data-bs-target="#paymentHistory">History</span>
+                <span class="me-2" v-html="i.paid_current_month ? `<span class='badge text-bg-primary'>Yes</span>` : `<span class='badge text-bg-danger'>No</span>`
+                "></span>
+
+                <span class="badge ml-3 text-bg-info" @click="getPaymentHistory(i)" data-bs-toggle="modal"
+                data-bs-target="#paymentHistory">Payment History</span>
               </th>
               <th>
                 <div class="btn-group" role="group">
@@ -200,10 +205,6 @@
                         @click="studentData(i)"
                         >Make Payment</a
                       >
-                    </li>
-                    <hr />
-                    <li>
-                      <a href="#" class="dropdown-item">Payment History</a>
                     </li>
                     <hr />
                     <li>
@@ -427,7 +428,7 @@
             <div class="modal-header">
               <h5 class="modal-title fs-5" id="paymentHistoryModalLable">
                 Student Payment History <br>
-                ID # [[studentTableRow.id]] -- [[studentTableRow.name]] 
+                ID # [[studentTableRow.id]] -- [[studentTableRow.name]]
 
               </h5>
               <button
@@ -438,6 +439,12 @@
               ></button>
             </div>
             <div class="modal-body">
+              <div>
+                <p>Total Fee: [[studentTableRow.total_course_amount ? studentTableRow.total_course_amount : "N/A" ]] </p>
+                <p>Total Payment: [[studentTableRow.total_payment ? studentTableRow.total_payment : "N/A" ]]</p>
+                <p>Total Discount: [[studentTableRow.total_discount ? studentTableRow.total_discount : "N/A"]]</p>
+                <p>Due Amount: [[studentTableRow.due_amount]]</p>
+              </div>
               <div class="row">
                 <table class="table table-light table-striped table-hover table-bordered table-sm">
                   <thead class="table-dark">
@@ -470,7 +477,6 @@
       const courseList = JSON.parse("{{course_list|escapejs}}");
       const academicYearList = JSON.parse("{{academic_year_list|escapejs}}");
       const batchList = JSON.parse("{{batch_list|escapejs}}");
-      console.log(courseList)
       const { createApp } = Vue;
       createApp({
         mounted() {
@@ -546,7 +552,6 @@
                 `http://127.0.0.1:8000/course/student-payment-list/${student.id}/`)
               .then((response) => {
                 this.studentPaymentList = response.data
-                console.log(this.studentPaymentList)
               })
               .catch((error) => {
                 console.log(error);
@@ -607,7 +612,6 @@
                 this.studentsList = response.data;
               })
               .catch((error) => {
-                console.log("catch block");
                 console.log(error);
               });
           },

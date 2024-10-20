@@ -69,7 +69,7 @@ class StudentEnroll(models.Model):
     # created_by = models.ForeignKey(User, null=True, blank=True)
 
     def __str__(self):
-        return self.course.name
+        return f"{self.student.name}-{self.course.name}--{self.course_amount}"
 
 
 class StudentBilling(models.Model):

@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import Payment
 from student.models import Student
-from course.models import Batch, Course, StudentEnroll, StudentBilling
+from course.models import Batch, Course, StudentEnroll, StudentBilling, Discount
 from django.db import transaction
 
 
@@ -30,13 +30,13 @@ class CourseAssignSerializer(serializers.Serializer):
 
         with transaction.atomic():
             student_enroll = StudentEnroll.objects.create(
-                student=student, course=course, batch=batch)
+                student=student, course=course, course_amount=course.price)
 
-            discount = discount if discount else 0
-            billing = StudentBilling.objects.create(student=student,
-                                                    course=course, course_amount=course.price, discount=discount)
+            if discount:
+                billing = Discount.objects.create(
+                    student=student, amount=discount)
 
-            if amount_payment is not None:
+            if amount_payment:
                 payment = Payment.objects.create(student=student,
                                                  amount_payment=amount_payment)
 
