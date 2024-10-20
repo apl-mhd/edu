@@ -33,8 +33,8 @@ class CourseAssignSerializer(serializers.Serializer):
                 student=student, course=course, batch=batch)
 
             discount = discount if discount else 0
-            billing = StudentBilling.objects.create(
-                course=course, course_amount=course.price, discount=discount)
+            billing = StudentBilling.objects.create(student=student,
+                                                    course=course, course_amount=course.price, discount=discount)
 
             if amount_payment is not None:
                 payment = Payment.objects.create(student=student,
