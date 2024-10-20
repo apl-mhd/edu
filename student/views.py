@@ -22,7 +22,6 @@ from django.db.models.functions import Coalesce
 # class StudentFilter(APIView):
 
 
-
 class StudentList(APIView):
     def get(self, requst, *args, **kwargs):
 
@@ -69,10 +68,9 @@ class StudentList(APIView):
         return Response(data)
 
 
-class StudentView(APIView):
+class StudentCreateView(APIView):
 
     def post(self, request, *args, **kwargs):
-
         try:
             serializer_data = StudentSerializer(data=request.data)
             if serializer_data.is_valid():
@@ -105,55 +103,7 @@ def student(request):
 
     batch_list = []
     for i in batch:
-        day_name = f"{i.name}"
-        for j in i.days.all():
-            day_name += j.name+"-"
-
-        day_name = f"{day_name}{i.start_time.strftime('%H:%M')} to {i.end_time.strftime('%H:%M')}"
-        batch_list.append({"id": i.id, "title": day_name})
-
-    # if request.method == 'POST':
-    #     data = json.loads(request.body)
-    #     if data['course']:
-    #         data['course'] = Course.objects.filter(id=data['course']).first()
-
-    #     else:
-    #         data['course'] = None
-
-    #     if data['hsc_batch']:
-    #         data['hsc_batch'] = AcademicYear.objects.filter(
-    #             id=data['hsc_batch']).first()
-
-    #     else:
-    #         data['hsc_batch'] = None
-
-    #     if data['home_town']:
-    #         data['home_town'] = District.objects.filter(
-    #             id=data['home_town']).first()
-    #     else:
-    #         data['home_town'] = None
-
-    #     if data['college']:
-    #         data['college'] = College.objects.filter(
-    #             id=data['college']).first()
-
-    #     else:
-    #         data['college'] = None
-
-    #     data.pop('course')
-
-    #     a = {"name": "apel", "x": "y"}
-
-    #     serializer_data = StudentSerializer(data=a)
-    #     if serializer_data.is_valid():
-    #         print("ifaa")
-    #         print(serializer_data.validated_data)
-    #     else:
-    #         print("else")
-    #         print(serializer_data.errors)
-    #         return Response(serializer_data.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    #     return HttpResponse("apel")
+        batch_list.append({"id": i.id, "title": i.get_batch_details()})
 
     context = {
         'home_town_list': json.dumps(list(district_list)),
