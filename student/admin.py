@@ -1,7 +1,6 @@
 from django.contrib import admin
-from .models import Student, AcademicYear
+from .models import Student, AcademicYear, Day, Batch
 
 # Register your models here.
 
-admin.site.register(Student)
-admin.site.register(AcademicYear)
+admin.site.register([Student, AcademicYear, Day, Batch])

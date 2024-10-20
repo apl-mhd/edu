@@ -36,7 +36,7 @@ class Course(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.name
+        return f"{self.name}--{self.price}"
 
 
 class Batch(models.Model):
@@ -60,20 +60,16 @@ class Batch(models.Model):
 
 
 class StudentEnroll(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
     student = models.ForeignKey(
-        Student, on_delete=models.CASCADE, null=True, blank=True)
-    batch = models.ForeignKey(
-        Batch, on_delete=models.CASCADE, null=True, blank=True)
+        Student, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    course_amount = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     # created_by = models.ForeignKey(User, null=True, blank=True)
 
     def __str__(self):
         return self.course.name
-
-    def get_section_details(self):
-        return self.batch
 
 
 class StudentBilling(models.Model):
@@ -103,6 +99,30 @@ class StudentBilling(models.Model):
 
     def __str__(self):
         return f"{self.student.name}-{self.course.name}-{self.course_amount}"
+
+
+class Discount(models.Model):
+    Discount_TYPES = [
+        ('poor', 'Poor'),
+        ('meritorious', 'Meritorious'),
+        ('ralative', 'Relatives'),
+        ('friend', 'Friends'),
+        ('other', 'Other'),
+    ]
+
+    student = models.ForeignKey(
+        Student, on_delete=models.CASCADE, related_name='discounts')
+    amount = models.IntegerField(validators=[MinValueValidator(1)])
+    discount_type = models.CharField(
+        max_length=20, choices=Discount_TYPES, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-id']
+
+    def __str__(self):
+        return f"{self.student.name} -- {self.amount} -- {self.discount_type}"
 
 
 class Payment(models.Model):
