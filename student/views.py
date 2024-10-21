@@ -139,7 +139,7 @@ def index(request):
 def student(request):
     district_list = District.objects.all().values("id", "name")
     college_list = College.objects.all().values("id", "name")
-    course_list = Course.objects.all().values("id", "name", "price")
+    course_list = Course.objects.all().values("id", "name", "course_fee")
     academic_year_list = AcademicYear.objects.all().values('id', 'year')
     batches = Batch.objects.all()
 

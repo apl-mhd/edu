@@ -30,13 +30,13 @@ class Day(models.Model):
 class Course(models.Model):
     name = models.CharField(max_length=100)
     code = models.CharField(max_length=20)
-    price = models.IntegerField()
+    course_fee = models.IntegerField()
     status = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.name}--{self.price}"
+        return f"{self.name}--{self.course_fee}"
 
 
 class Batch(models.Model):
