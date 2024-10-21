@@ -426,11 +426,11 @@
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title fs-5" id="paymentHistoryModalLable">
+              <p class="modal-title fs-5" id="paymentHistoryModalLable">
                 Student Payment History <br>
                 ID # [[studentTableRow.id]] -- [[studentTableRow.name]]
 
-              </h5>
+              </p>
               <button
                 type="button"
                 class="btn-close"
@@ -439,11 +439,11 @@
               ></button>
             </div>
             <div class="modal-body">
-              <div>
-                <p>Total Fee: [[studentTableRow.total_course_amount ? studentTableRow.total_course_amount : "N/A" ]] </p>
-                <p>Total Payment: [[studentTableRow.total_payment ? studentTableRow.total_payment : "N/A" ]]</p>
-                <p>Total Discount: [[studentTableRow.total_discount ? studentTableRow.total_discount : "N/A"]]</p>
-                <p>Due Amount: [[studentTableRow.due_amount]]</p>
+              <div class="mb-2">
+                <span class="f-3">Total Fee: [[studentTableRow.total_course_amount ? studentTableRow.total_course_amount : "N/A" ]] </span> <br>
+                <span class="f-1">Total Payment: [[studentTableRow.total_payment ? studentTableRow.total_payment : "N/A" ]]</span> <br>
+                <span class="f-1">Total Discount: [[studentTableRow.total_discount ? studentTableRow.total_discount : "N/A"]]</span> <br>
+                <span class="f-1">Due Amount: [[studentTableRow.due_amount]]</span>
               </div>
               <div class="row">
                 <table class="table table-light table-striped table-hover table-bordered table-sm">
@@ -461,6 +461,7 @@
                       <th>[[studentPayment.payment_date]]</th>
                     </tr>
                   </tbody>
+                  
               </table>
               </div>
             </div>
