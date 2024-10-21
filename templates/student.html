@@ -279,7 +279,7 @@
                       min="1"
                       type="text"
                       class="form-control"
-                      v-model="paymentFormData.amount_payment"
+                      v-model="paymentFormData.payment_amount"
                       id="payment"
                     />
                   </div>
@@ -390,7 +390,7 @@
                       min="1"
                       type="text"
                       class="form-control"
-                      v-model="courseAssignFormData.amount_payment"
+                      v-model="courseAssignFormData.payment_amount"
                       id="payment"
                     />
                   </div>
@@ -457,7 +457,7 @@
                   <tbody>
                     <tr v-for="(studentPayment, index) in studentPaymentList" :key="index">
                       <th>[[index+1]]</th>
-                      <th>[[studentPayment.amount_payment]]</th>
+                      <th>[[studentPayment.payment_amount]]</th>
                       <th>[[studentPayment.payment_date]]</th>
                     </tr>
                   </tbody>
@@ -498,14 +498,14 @@
             },
             blankPaymentForm: {
               student: null,
-              amount_payment: 0,
+              payment_amount: 0,
             },
             blankAssignCourseForm: {
               student: null,
               course: null,
               batch: null,
               discount: null,
-              amount_payment: null,
+              payment_amount: null,
             },
             student: {
               name: null,
@@ -520,14 +520,14 @@
             },
             paymentFormData: {
               student: null,
-              amount_payment: 0,
+              payment_amount: 0,
             },
             courseAssignFormData: {
               student: null,
               course: null,
               batch: null,
               discount: null,
-              amount_payment: null,
+              payment_amount: null,
             },
             homeTowns: homeTownLIst,
             colleges: collegeList,
