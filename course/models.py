@@ -76,7 +76,7 @@ class StudentBilling(models.Model):
 
     FEE_TYPES = [
         ('tuition', 'Tuition Fee'),
-        ('course', 'course Fee'),
+        ('course', 'Course Fee'),
         ('exam', 'Exam Fee'),
         ('material', 'Material Fee'),
         ('other', 'Other'),
@@ -96,7 +96,7 @@ class StudentBilling(models.Model):
     # created_by = models.ForeignKey(User, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.student.name}-{self.course.name}-{self.course_fee}"
+        return f"{self.student.name}-{self.course}-{self.course_fee}"
 
 
 class Discount(models.Model):
