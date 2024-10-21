@@ -13,10 +13,10 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 # Create your views here.
-from django.db.models import Subquery, Sum, OuterRef, When, Case, Exists, Value, F
+from django.db.models import Subquery, Sum, OuterRef, When, Case, Exists, Value, F, CharField
 from django.utils import timezone
 
-from django.db.models.functions import Coalesce
+from django.db.models.functions import Coalesce, Concat, Cast
 
 
 # class StudentFilter(APIView):
@@ -60,6 +60,8 @@ class StudentList(APIView):
                 default=Value(False)
             ),
 
+
+
         ).values('id', 'name', 'hsc_batch__year', 'total_course_amount', 'total_discount', 'total_payment', 'paid_current_month', 'due_amount', 'batch__name', 'batch__start_time', 'batch__end_time').order_by('-id')
 
         data = students
@@ -97,7 +99,16 @@ class StudentListTest(APIView):
                 default=Value(False)
             ),
 
-        ).values('id', 'name', 'hsc_batch__year', 'total_course_amount', 'total_payment', 'paid_current_month', 'due_amount', 'batch__name', 'batch__start_time').order_by('-id')
+            batch_details=Concat(
+                'batch__name',
+                Value(' - '),
+                Cast('batch__start_time', output_field=CharField()),
+                Value(' to '),
+                Cast('batch__end_time', output_field=CharField()),
+                output_field=CharField()
+            )
+
+        ).values('id', 'name', 'hsc_batch__year', 'total_course_amount', 'total_payment', 'paid_current_month', 'due_amount', 'batch_details').order_by('-id')
 
         # students = Student.objects.all()
 

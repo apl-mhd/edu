@@ -194,7 +194,7 @@
                 <div class="btn-group" role="group">
                   <button
                     type="button"
-                    class="btn btn-primary dropdown-toggle"
+                    class="btn btn-primary dropdown-toggle btn-sm"
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
                   >
@@ -358,24 +358,6 @@
                       </option>
                     </select>
                   </div>
-                  <div class="col-md-12 mt-3">
-                    <label for="course">Select Batch</label>
-                    <select
-                      class="form-select"
-                      v-model="courseAssignFormData.batch"
-                      name="course"
-                      id="course"
-                    >
-                      <option disabled value="null">Select Course</option>
-                      <option
-                        v-for="batch in batches"
-                        :key="batch.id"
-                        :value="batch.id"
-                      >
-                        [[batch.title]]
-                      </option>
-                    </select>
-                  </div>
                   <div class="col mt-3">
                     <label for="courseFee" class="col-form-label"
                       >Discount Amount</label
@@ -508,7 +490,6 @@
             blankAssignCourseForm: {
               student: null,
               course: null,
-              batch: null,
               discount_amount: null,
               payment_amount: null,
             },
@@ -530,7 +511,6 @@
             courseAssignFormData: {
               student: null,
               course: null,
-              batch: null,
               discount_amount: null,
               payment_amount: null,
             },

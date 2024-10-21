@@ -16,14 +16,12 @@ class CourseAssignSerializer(serializers.Serializer):
     student = serializers.PrimaryKeyRelatedField(
         queryset=Student.objects.all())
     course = serializers.PrimaryKeyRelatedField(queryset=Course.objects.all())
-    batch = serializers.PrimaryKeyRelatedField(queryset=Batch.objects.all())
     discount_amount = serializers.IntegerField(required=False, allow_null=True)
     payment_amount = serializers.IntegerField(required=False, allow_null=True)
 
     def create(self, validated_data):
         student = validated_data.get('student')
         course = validated_data.get('course')
-        batch = validated_data.get('batch')
 
         discount_amount = validated_data.get('discount_amount')
         payment_amount = validated_data.get('payment_amount')
