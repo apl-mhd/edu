@@ -30,13 +30,13 @@ class Day(models.Model):
 class Course(models.Model):
     name = models.CharField(max_length=100)
     code = models.CharField(max_length=20)
-    price = models.IntegerField()
+    course_fee = models.IntegerField()
     status = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.name
+        return f"{self.name}--{self.course_fee}"
 
 
 class Batch(models.Model):
@@ -60,28 +60,23 @@ class Batch(models.Model):
 
 
 class StudentEnroll(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
     student = models.ForeignKey(
-        Student, on_delete=models.CASCADE, null=True, blank=True)
-    batch = models.ForeignKey(
-        Batch, on_delete=models.CASCADE, null=True, blank=True)
+        Student, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    course_fee = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     # created_by = models.ForeignKey(User, null=True, blank=True)
 
     def __str__(self):
-        return self.course.name
-
-    def get_section_details(self):
-        return self.batch
+        return f"{self.student.name}-{self.course.name}--{self.course_fee}"
 
 
 class StudentBilling(models.Model):
 
     FEE_TYPES = [
         ('tuition', 'Tuition Fee'),
-        ('course', 'course Fee'),
-        ('discount', 'Discount'),
+        ('course', 'Course Fee'),
         ('exam', 'Exam Fee'),
         ('material', 'Material Fee'),
         ('other', 'Other'),
@@ -93,8 +88,7 @@ class StudentBilling(models.Model):
         max_length=100, choices=FEE_TYPES, null=True, blank=True)
     course = models.ForeignKey(
         Course, null=True, blank=True, on_delete=models.CASCADE)
-    course_amount = models.IntegerField(default=0)
-    discount = models.IntegerField(default=0)
+    course_fee = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -102,7 +96,31 @@ class StudentBilling(models.Model):
     # created_by = models.ForeignKey(User, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.student.name}-{self.course.name}-{self.course_amount}"
+        return f"{self.student.name}-{self.course}-{self.course_fee}"
+
+
+class Discount(models.Model):
+    Discount_TYPES = [
+        ('poor', 'Poor'),
+        ('meritorious', 'Meritorious'),
+        ('ralative', 'Relatives'),
+        ('friend', 'Friends'),
+        ('other', 'Other'),
+    ]
+
+    student = models.ForeignKey(
+        Student, on_delete=models.CASCADE, related_name='discounts')
+    discount_amount = models.IntegerField(validators=[MinValueValidator(1)])
+    discount_type = models.CharField(
+        max_length=20, choices=Discount_TYPES, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-id']
+
+    def __str__(self):
+        return f"{self.student.name} -- {self.discount_amount} -- {self.discount_type}"
 
 
 class Payment(models.Model):
@@ -122,7 +140,7 @@ class Payment(models.Model):
 
     student = models.ForeignKey(
         Student, on_delete=models.CASCADE, related_name='payments')
-    amount_payment = models.IntegerField(validators=[MinValueValidator(1)])
+    payment_amount = models.IntegerField(validators=[MinValueValidator(1)])
     payment_date = models.DateTimeField(default=timezone.now)
     payment_type = models.CharField(
         max_length=20, choices=PAYMENT_TYPES, null=True, blank=True, default='tuition')
@@ -139,4 +157,4 @@ class Payment(models.Model):
         ordering = ['-id']
 
     def __str__(self):
-        return f"{self.student} - {self.amount_payment} on {self.payment_date}"
+        return f"{self.student} - {self.payment_amount} on {self.payment_date}"

@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import Payment
 from student.models import Student
-from course.models import Batch, Course, StudentEnroll, StudentBilling
+from course.models import Batch, Course, StudentEnroll, StudentBilling, Discount
 from django.db import transaction
 
 
@@ -17,28 +17,28 @@ class CourseAssignSerializer(serializers.Serializer):
         queryset=Student.objects.all())
     course = serializers.PrimaryKeyRelatedField(queryset=Course.objects.all())
     batch = serializers.PrimaryKeyRelatedField(queryset=Batch.objects.all())
-    discount = serializers.IntegerField(required=False, allow_null=True)
-    amount_payment = serializers.IntegerField(required=False, allow_null=True)
+    discount_amount = serializers.IntegerField(required=False, allow_null=True)
+    payment_amount = serializers.IntegerField(required=False, allow_null=True)
 
     def create(self, validated_data):
         student = validated_data.get('student')
         course = validated_data.get('course')
         batch = validated_data.get('batch')
 
-        discount = validated_data.get('discount')
-        amount_payment = validated_data.get('amount_payment')
+        discount_amount = validated_data.get('discount_amount')
+        payment_amount = validated_data.get('payment_amount')
 
         with transaction.atomic():
             student_enroll = StudentEnroll.objects.create(
-                student=student, course=course, batch=batch)
+                student=student, course=course, course_fee=course.course_fee)
 
-            discount = discount if discount else 0
-            billing = StudentBilling.objects.create(student=student,
-                                                    course=course, course_amount=course.price, discount=discount)
+            if discount_amount:
+                billing = Discount.objects.create(
+                    student=student, discount_amount=discount_amount)
 
-            if amount_payment is not None:
+            if payment_amount:
                 payment = Payment.objects.create(student=student,
-                                                 amount_payment=amount_payment)
+                                                 payment_amount=payment_amount)
 
         return validated_data
 

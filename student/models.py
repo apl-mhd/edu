@@ -2,11 +2,56 @@ from django.db import models
 from address.models import College, District
 
 
+class Day(models.Model):
+    DAYS_CHOICES = (
+        ('Sat', 'Saturday'),
+        ('Sun', 'Sunday'),
+        ('Mon', 'Monday'),
+        ('Tue', 'Tuesday'),
+        ('Wed', 'Wednesday'),
+        ('Thu', 'Thursday'),
+        ('Fri', 'Friday'),
+    )
+
+    name = models.CharField(max_length=20, choices=DAYS_CHOICES, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self):
+        return f"{self.name}"
+
+
+class Batch(models.Model):
+    name = models.CharField(max_length=50)
+    days = models.ManyToManyField(Day, related_name='days')
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+    status = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.get_batch_details()
+
+    def get_batch_details(self):
+        day_names = ""
+        for day in self.days.all():
+            day_names += f"-{day.name}"
+
+        return f"{self.name} {day_names}- From {self.start_time.strftime('%I:%M %p')} To {self.end_time.strftime('%I:%M %p')}"
+
+
 class AcademicYear(models.Model):
     year = models.IntegerField(unique=True)
     status = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-year']
 
     def __str__(self):
         return f"{self.year}"
@@ -46,6 +91,8 @@ class Student(models.Model):
         max_digits=4, decimal_places=2, null=True, blank=True)
     hsc_gpa = models.DecimalField(
         max_digits=4, decimal_places=2, null=True, blank=True)
+    batch = models.ForeignKey(
+        Batch, on_delete=models.CASCADE, null=True, blank=True)
     address = models.TextField(max_length=255, blank=True, null=True)
     remark = models.TextField(max_length=255, blank=True, null=True)
     status = models.BooleanField(default=True)

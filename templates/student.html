@@ -7,6 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     {% block css %} {% endblock css %}
+    <style>
+      
+    </style>
   </head>
   <body>
     {% block content %}
@@ -87,7 +90,7 @@
                 :key="course.id"
                 :value="course.id"
               >
-                [[course.name]]
+                [[course.name]]--[[course.course_fee]]
               </option>
             </select>
           </div>
@@ -169,16 +172,18 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(i, index) in studentsList" :key="i.id">
+            <tr v-for="(i, index) in studentsList" :key="i.id" :class="i.paid_current_month ? 'table-success': 'table-danger'">
               <th scope="row">[[index+1]]</th>
 
               <th>[[i.name]]</th>
               <th>[[i.hsc_batch__year]] - [[i.hsc_batch__year+1]]</th>
               <th>[[i.due_amount ? i.due_amount: 0 ]]</th>
               <th>
-                [[i.paid_current_month]]
-                <span @click="getPaymentHistory(i)" data-bs-toggle="modal"
-                data-bs-target="#paymentHistory">History</span>
+                <span class="me-2" v-html="i.paid_current_month ? `<span class='badge text-bg-primary'>Yes</span>` : `<span class='badge text-bg-danger'>No</span>`
+                "></span>
+
+                <span class="badge ml-3 text-bg-info" @click="getPaymentHistory(i)" data-bs-toggle="modal"
+                data-bs-target="#paymentHistory">Payment History</span>
               </th>
               <th>
                 <div class="btn-group" role="group">
@@ -200,10 +205,6 @@
                         @click="studentData(i)"
                         >Make Payment</a
                       >
-                    </li>
-                    <hr />
-                    <li>
-                      <a href="#" class="dropdown-item">Payment History</a>
                     </li>
                     <hr />
                     <li>
@@ -278,7 +279,7 @@
                       min="1"
                       type="text"
                       class="form-control"
-                      v-model="paymentFormData.amount_payment"
+                      v-model="paymentFormData.payment_amount"
                       id="payment"
                     />
                   </div>
@@ -348,7 +349,7 @@
                         :key="course.id"
                         :value="course.id"
                       >
-                        [[course.name]]-[[course.price]]
+                        [[course.name]]-[[course.course_fee]]
                       </option>
                     </select>
                   </div>
@@ -378,7 +379,7 @@
                       type="text"
                       class="form-control"
                       id="courseFee"
-                      v-model="courseAssignFormData.discount"
+                      v-model="courseAssignFormData.discount_amount"
                     />
                   </div>
                   <div class="col mt-3">
@@ -389,7 +390,7 @@
                       min="1"
                       type="text"
                       class="form-control"
-                      v-model="courseAssignFormData.amount_payment"
+                      v-model="courseAssignFormData.payment_amount"
                       id="payment"
                     />
                   </div>
@@ -425,11 +426,11 @@
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title fs-5" id="paymentHistoryModalLable">
+              <p class="modal-title fs-5" id="paymentHistoryModalLable">
                 Student Payment History <br>
-                ID # [[studentTableRow.id]] -- [[studentTableRow.name]] 
+                ID # [[studentTableRow.id]] -- [[studentTableRow.name]]
 
-              </h5>
+              </p>
               <button
                 type="button"
                 class="btn-close"
@@ -438,6 +439,12 @@
               ></button>
             </div>
             <div class="modal-body">
+              <div class="mb-2">
+                <span class="f-3">Total Fee: [[studentTableRow.total_course_amount ? studentTableRow.total_course_amount : "N/A" ]] </span> <br>
+                <span class="f-1">Total Payment: [[studentTableRow.total_payment ? studentTableRow.total_payment : "N/A" ]]</span> <br>
+                <span class="f-1">Total Discount: [[studentTableRow.total_discount ? studentTableRow.total_discount : "N/A"]]</span> <br>
+                <span class="f-1">Due Amount: [[studentTableRow.due_amount]]</span>
+              </div>
               <div class="row">
                 <table class="table table-light table-striped table-hover table-bordered table-sm">
                   <thead class="table-dark">
@@ -450,10 +457,11 @@
                   <tbody>
                     <tr v-for="(studentPayment, index) in studentPaymentList" :key="index">
                       <th>[[index+1]]</th>
-                      <th>[[studentPayment.amount_payment]]</th>
+                      <th>[[studentPayment.payment_amount]]</th>
                       <th>[[studentPayment.payment_date]]</th>
                     </tr>
                   </tbody>
+                  
               </table>
               </div>
             </div>
@@ -490,14 +498,14 @@
             },
             blankPaymentForm: {
               student: null,
-              amount_payment: 0,
+              payment_amount: 0,
             },
             blankAssignCourseForm: {
               student: null,
               course: null,
               batch: null,
-              discount: null,
-              amount_payment: null,
+              discount_amount: null,
+              payment_amount: null,
             },
             student: {
               name: null,
@@ -512,14 +520,14 @@
             },
             paymentFormData: {
               student: null,
-              amount_payment: 0,
+              payment_amount: 0,
             },
             courseAssignFormData: {
               student: null,
               course: null,
               batch: null,
-              discount: null,
-              amount_payment: null,
+              discount_amount: null,
+              payment_amount: null,
             },
             homeTowns: homeTownLIst,
             colleges: collegeList,
@@ -545,7 +553,6 @@
                 `http://127.0.0.1:8000/course/student-payment-list/${student.id}/`)
               .then((response) => {
                 this.studentPaymentList = response.data
-                console.log(this.studentPaymentList)
               })
               .catch((error) => {
                 console.log(error);
@@ -606,7 +613,6 @@
                 this.studentsList = response.data;
               })
               .catch((error) => {
-                console.log("catch block");
                 console.log(error);
               });
           },
