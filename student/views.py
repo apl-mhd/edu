@@ -34,7 +34,7 @@ class StudentList(APIView):
             payment_date__year=current_month.year
         ).values('id')
 
-        students = Student.objects.annotate(
+        students = Student.objects.select_related('batch').annotate(
             total_course_amount=Subquery(
                 StudentEnroll.objects.filter(student=OuterRef('pk')).values('student').annotate(
                     total=Sum('course_fee')
@@ -60,7 +60,7 @@ class StudentList(APIView):
                 default=Value(False)
             ),
 
-        ).values('id', 'name', 'hsc_batch__year', 'total_course_amount', 'total_discount', 'total_payment', 'paid_current_month', 'due_amount').order_by('-id')
+        ).values('id', 'name', 'hsc_batch__year', 'total_course_amount', 'total_discount', 'total_payment', 'paid_current_month', 'due_amount', 'batch__name', 'batch__start_time', 'batch__end_time').order_by('-id')
 
         data = students
         return Response(data)
@@ -78,7 +78,7 @@ class StudentListTest(APIView):
             payment_date__year=current_month.year
         ).values('id')
 
-        students = Student.objects.annotate(
+        students = Student.objects.select_related('batch').annotate(
             total_course_amount=Subquery(
                 StudentBilling.objects.filter(student=OuterRef('pk')).values('student').annotate(
                     total=Sum('course_fee')
@@ -97,7 +97,7 @@ class StudentListTest(APIView):
                 default=Value(False)
             ),
 
-        ).values('id', 'name', 'hsc_batch__year', 'total_course_amount', 'total_payment', 'paid_current_month', 'due_amount').order_by('-id')
+        ).values('id', 'name', 'hsc_batch__year', 'total_course_amount', 'total_payment', 'paid_current_month', 'due_amount', 'batch__name', 'batch__start_time').order_by('-id')
 
         # students = Student.objects.all()
 

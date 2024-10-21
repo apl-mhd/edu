@@ -77,20 +77,20 @@
             </select>
           </div>
           <div class="col-3">
-            <label for="studetn-course" class="form-label">Course</label>
+            <label for="studetn-course" class="form-label">Batch</label>
             <select
               class="form-select"
-              v-model="student.course"
+              v-model="student.batch"
               name="course"
-              id="studetn-course"
+              id="studetn-batch"
             >
-              <option disabled value="null">Select Course</option>
+              <option disabled value="null">Select Batch</option>
               <option
-                v-for="course in courses"
-                :key="course.id"
-                :value="course.id"
+                v-for="batch in batches"
+                :key="batch.id"
+                :value="batch.id"
               >
-                [[course.name]]--[[course.course_fee]]
+                [[batch.title]]
               </option>
             </select>
           </div>
@@ -165,6 +165,7 @@
             <tr>
               <th scope="col">ID</th>
               <th scope="col">Name</th>
+              <th scope="col">Batch</th>
               <th scope="col">HSC Batch</th>
               <th scope="col">Due Amount</th>
               <th scope="col">Paid This Month</th>
@@ -173,19 +174,23 @@
           </thead>
           <tbody>
             <tr v-for="(i, index) in studentsList" :key="i.id" :class="i.paid_current_month ? 'table-success': 'table-danger'">
-              <th scope="row">[[index+1]]</th>
+              <td scope="row">[[index+1]]</td>
 
-              <th>[[i.name]]</th>
-              <th>[[i.hsc_batch__year]] - [[i.hsc_batch__year+1]]</th>
-              <th>[[i.due_amount ? i.due_amount: 0 ]]</th>
-              <th>
+              <td>[[i.name]]</td>
+              <td> 
+                <small class="">[[i.batch__name]]</small> <br>
+                <small>[[ i.batch__start_time]] -[[ i.batch__end_time]]</small>
+               </td>
+              <td>[[i.hsc_batch__year]] - [[i.hsc_batch__year+1]]</td>
+              <td>[[i.due_amount ? i.due_amount: 0 ]]</td>
+              <td>
                 <span class="me-2" v-html="i.paid_current_month ? `<span class='badge text-bg-primary'>Yes</span>` : `<span class='badge text-bg-danger'>No</span>`
                 "></span>
 
                 <span class="badge ml-3 text-bg-info" @click="getPaymentHistory(i)" data-bs-toggle="modal"
                 data-bs-target="#paymentHistory">Payment History</span>
-              </th>
-              <th>
+              </td>
+              <td>
                 <div class="btn-group" role="group">
                   <button
                     type="button"
@@ -227,7 +232,7 @@
                     </li>
                   </ul>
                 </div>
-              </th>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -491,7 +496,7 @@
               gurdian_phone: null,
               email: null,
               gender: null,
-              course: null,
+              batch: null,
               hsc_batch: null,
               home_town: null,
               college: null,
@@ -513,7 +518,7 @@
               gurdian_phone: null,
               email: null,
               gender: null,
-              course: null,
+              batch: null,
               hsc_batch: null,
               home_town: null,
               college: null,
