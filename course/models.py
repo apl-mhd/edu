@@ -8,25 +8,6 @@ from django.core.validators import MinValueValidator
 # # Create your models here.
 
 
-class Day(models.Model):
-    DAYS_CHOICES = (
-        ('Mon', 'Monday'),
-        ('Tue', 'Tuesday'),
-        ('Wed', 'Wednesday'),
-        ('Thu', 'Thursday'),
-        ('Fri', 'Friday'),
-        ('Sat', 'Saturday'),
-        ('Sun', 'Sunday'),
-    )
-
-    name = models.CharField(max_length=20, choices=DAYS_CHOICES, unique=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return f"{self.name}"
-
-
 class Course(models.Model):
     name = models.CharField(max_length=100)
     code = models.CharField(max_length=20)
@@ -37,26 +18,6 @@ class Course(models.Model):
 
     def __str__(self):
         return f"{self.name}--{self.course_fee}"
-
-
-class Batch(models.Model):
-    name = models.CharField(max_length=50)
-    days = models.ManyToManyField(Day, related_name='days')
-    start_time = models.TimeField()
-    end_time = models.TimeField()
-    status = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.get_batch_details()
-
-    def get_batch_details(self):
-        day_names = ""
-        for day in self.days.all():
-            day_names += f"-{day.name}"
-
-        return f"{self.name} {day_names}- From {self.start_time.strftime('%I:%M %p')} To {self.end_time.strftime('%I:%M %p')}"
 
 
 class StudentEnroll(models.Model):
