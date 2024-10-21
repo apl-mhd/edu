@@ -142,7 +142,7 @@ class Payment(models.Model):
 
     student = models.ForeignKey(
         Student, on_delete=models.CASCADE, related_name='payments')
-    amount_payment = models.IntegerField(validators=[MinValueValidator(1)])
+    payment_amount = models.IntegerField(validators=[MinValueValidator(1)])
     payment_date = models.DateTimeField(default=timezone.now)
     payment_type = models.CharField(
         max_length=20, choices=PAYMENT_TYPES, null=True, blank=True, default='tuition')
@@ -159,4 +159,4 @@ class Payment(models.Model):
         ordering = ['-id']
 
     def __str__(self):
-        return f"{self.student} - {self.amount_payment} on {self.payment_date}"
+        return f"{self.student} - {self.payment_amount} on {self.payment_date}"

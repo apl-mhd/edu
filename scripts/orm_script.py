@@ -46,7 +46,7 @@ def run():
     #     ),
     #     total_payment=Subquery(
     #         Payment.objects.filter(student=OuterRef('pk')).values('student').annotate(
-    #             total=Sum('amount_payment', default=0)
+    #             total=Sum('payment_amount', default=0)
     #         ).values('total')
     #     ),
     #     paid_current_month=Case(
@@ -76,7 +76,7 @@ def run():
     #     ),
     #     total_payment=Subquery(
     #         Payment.objects.filter(student=OuterRef('pk')).values('student').annotate(
-    #             total=Sum('amount_payment')
+    #             total=Sum('payment_amount')
     #         ).values('total')
     #     ),
     #     paid_current_month=Case(

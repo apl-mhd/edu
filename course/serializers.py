@@ -18,7 +18,7 @@ class CourseAssignSerializer(serializers.Serializer):
     course = serializers.PrimaryKeyRelatedField(queryset=Course.objects.all())
     batch = serializers.PrimaryKeyRelatedField(queryset=Batch.objects.all())
     discount = serializers.IntegerField(required=False, allow_null=True)
-    amount_payment = serializers.IntegerField(required=False, allow_null=True)
+    payment_amount = serializers.IntegerField(required=False, allow_null=True)
 
     def create(self, validated_data):
         student = validated_data.get('student')
@@ -26,7 +26,7 @@ class CourseAssignSerializer(serializers.Serializer):
         batch = validated_data.get('batch')
 
         discount = validated_data.get('discount')
-        amount_payment = validated_data.get('amount_payment')
+        payment_amount = validated_data.get('payment_amount')
 
         with transaction.atomic():
             student_enroll = StudentEnroll.objects.create(
@@ -36,9 +36,9 @@ class CourseAssignSerializer(serializers.Serializer):
                 billing = Discount.objects.create(
                     student=student, discount_amount=discount)
 
-            if amount_payment:
+            if payment_amount:
                 payment = Payment.objects.create(student=student,
-                                                 amount_payment=amount_payment)
+                                                 payment_amount=payment_amount)
 
         return validated_data
 

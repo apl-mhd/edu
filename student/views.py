@@ -48,7 +48,7 @@ class StudentList(APIView):
 
             total_payment=Subquery(
                 Payment.objects.filter(student=OuterRef('pk')).values('student').annotate(
-                    total=Sum('amount_payment')
+                    total=Sum('payment_amount')
                 ).values('total')
             ),
             due_amount=Coalesce(F('total_course_amount'), Value(0)) -
@@ -91,7 +91,7 @@ class StudentListTest(APIView):
             ),
             total_payment=Subquery(
                 Payment.objects.filter(student=OuterRef('pk')).values('student').annotate(
-                    total=Sum('amount_payment')
+                    total=Sum('payment_amount')
                 ).values('total')
             ),
             due_amount=F('total_course_amount') -
