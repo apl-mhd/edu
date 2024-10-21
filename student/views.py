@@ -84,18 +84,12 @@ class StudentListTest(APIView):
                     total=Sum('course_fee')
                 ).values('total')
             ),
-            total_discount=Subquery(
-                StudentBilling.objects.filter(student=OuterRef('pk')).values('student').annotate(
-                    total=Sum('discount')
-                ).values('total')
-            ),
             total_payment=Subquery(
                 Payment.objects.filter(student=OuterRef('pk')).values('student').annotate(
                     total=Sum('payment_amount')
                 ).values('total')
             ),
             due_amount=F('total_course_amount') -
-            Coalesce(F('total_discount'), Value(0)) -
             Coalesce(F('total_payment'), Value(0)),
 
             paid_current_month=Case(
@@ -103,7 +97,7 @@ class StudentListTest(APIView):
                 default=Value(False)
             ),
 
-        ).values('id', 'name', 'hsc_batch__year', 'total_course_amount', 'total_discount', 'total_payment', 'paid_current_month', 'due_amount').order_by('-id')
+        ).values('id', 'name', 'hsc_batch__year', 'total_course_amount', 'total_payment', 'paid_current_month', 'due_amount').order_by('-id')
 
         # students = Student.objects.all()
 

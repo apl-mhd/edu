@@ -77,7 +77,6 @@ class StudentBilling(models.Model):
     FEE_TYPES = [
         ('tuition', 'Tuition Fee'),
         ('course', 'course Fee'),
-        ('discount', 'Discount'),
         ('exam', 'Exam Fee'),
         ('material', 'Material Fee'),
         ('other', 'Other'),
@@ -90,7 +89,6 @@ class StudentBilling(models.Model):
     course = models.ForeignKey(
         Course, null=True, blank=True, on_delete=models.CASCADE)
     course_fee = models.IntegerField(default=0)
-    discount = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
