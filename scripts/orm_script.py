@@ -36,7 +36,7 @@ def run():
     # students = Student.objects.select_related('hsc_batch').annotate(
     #     total_course_amount=Subquery(
     #         StudentBilling.objects.filter(student=OuterRef('pk')).values('student').annotate(
-    #             total=Sum('course_amount', default=0)
+    #             total=Sum('course_fee', default=0)
     #         ).values('total')
     #     ),
     #     total_discount=Subquery(
@@ -66,7 +66,7 @@ def run():
     # students = Student.objects.annotate(
     #     total_course_amount=Subquery(
     #         StudentBilling.objects.filter(student=OuterRef('pk')).values('student').annotate(
-    #             total=Sum('course_amount')
+    #             total=Sum('course_fee')
     #         ).values('total')
     #     ),
     #     total_discount=Subquery(

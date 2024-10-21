@@ -37,12 +37,12 @@ class StudentList(APIView):
         students = Student.objects.annotate(
             total_course_amount=Subquery(
                 StudentEnroll.objects.filter(student=OuterRef('pk')).values('student').annotate(
-                    total=Sum('course_amount')
+                    total=Sum('course_fee')
                 ).values('total')
             ),
             total_discount=Subquery(
                 Discount.objects.filter(student=OuterRef('pk')).values('student').annotate(
-                    total=Sum('amount')
+                    total=Sum('discount_amount')
                 ).values('total')
             ),
 
@@ -81,7 +81,7 @@ class StudentListTest(APIView):
         students = Student.objects.annotate(
             total_course_amount=Subquery(
                 StudentBilling.objects.filter(student=OuterRef('pk')).values('student').annotate(
-                    total=Sum('course_amount')
+                    total=Sum('course_fee')
                 ).values('total')
             ),
             total_discount=Subquery(

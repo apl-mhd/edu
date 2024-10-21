@@ -63,13 +63,13 @@ class StudentEnroll(models.Model):
     student = models.ForeignKey(
         Student, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    course_amount = models.IntegerField()
+    course_fee = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     # created_by = models.ForeignKey(User, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.student.name}-{self.course.name}--{self.course_amount}"
+        return f"{self.student.name}-{self.course.name}--{self.course_fee}"
 
 
 class StudentBilling(models.Model):
@@ -89,7 +89,7 @@ class StudentBilling(models.Model):
         max_length=100, choices=FEE_TYPES, null=True, blank=True)
     course = models.ForeignKey(
         Course, null=True, blank=True, on_delete=models.CASCADE)
-    course_amount = models.IntegerField(default=0)
+    course_fee = models.IntegerField(default=0)
     discount = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -98,7 +98,7 @@ class StudentBilling(models.Model):
     # created_by = models.ForeignKey(User, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.student.name}-{self.course.name}-{self.course_amount}"
+        return f"{self.student.name}-{self.course.name}-{self.course_fee}"
 
 
 class Discount(models.Model):
@@ -112,7 +112,7 @@ class Discount(models.Model):
 
     student = models.ForeignKey(
         Student, on_delete=models.CASCADE, related_name='discounts')
-    amount = models.IntegerField(validators=[MinValueValidator(1)])
+    discount_amount = models.IntegerField(validators=[MinValueValidator(1)])
     discount_type = models.CharField(
         max_length=20, choices=Discount_TYPES, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -122,7 +122,7 @@ class Discount(models.Model):
         ordering = ['-id']
 
     def __str__(self):
-        return f"{self.student.name} -- {self.amount} -- {self.discount_type}"
+        return f"{self.student.name} -- {self.discount_amount} -- {self.discount_type}"
 
 
 class Payment(models.Model):

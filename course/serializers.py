@@ -30,11 +30,11 @@ class CourseAssignSerializer(serializers.Serializer):
 
         with transaction.atomic():
             student_enroll = StudentEnroll.objects.create(
-                student=student, course=course, course_amount=course.course_fee)
+                student=student, course=course, course_fee=course.course_fee)
 
             if discount:
                 billing = Discount.objects.create(
-                    student=student, amount=discount)
+                    student=student, discount_amount=discount)
 
             if amount_payment:
                 payment = Payment.objects.create(student=student,
