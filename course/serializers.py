@@ -16,8 +16,10 @@ class CourseAssignSerializer(serializers.Serializer):
     student = serializers.PrimaryKeyRelatedField(
         queryset=Student.objects.all())
     course = serializers.PrimaryKeyRelatedField(queryset=Course.objects.all())
-    discount_amount = serializers.IntegerField(required=False, allow_null=True)
-    payment_amount = serializers.IntegerField(required=False, allow_null=True)
+    discount_amount = serializers.IntegerField(
+        min_value=1, required=False, allow_null=True)
+    payment_amount = serializers.IntegerField(
+        min_value=1, required=False, allow_null=True)
 
     def create(self, validated_data):
         student = validated_data.get('student')

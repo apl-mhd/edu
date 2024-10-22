@@ -124,11 +124,11 @@ class StudentCreateView(APIView):
             serializer_data = StudentSerializer(data=request.data)
             if serializer_data.is_valid():
                 serializer_data.save()
-                return Response(serializer_data.data)
+                return Response(data={"message": "Successfully student created.", "data": serializer_data.data}, status=status.HTTP_201_CREATED)
             else:
-                print("else")
-                print(serializer_data.errors)
-                return Response(serializer_data.errors, status=status.HTTP_400_BAD_REQUEST)
+                for i in serializer_data.errors:
+                    print(i)
+                return Response(data={"message": "Fill correctly all the required Field", "errors": serializer_data.errors}, status=status.HTTP_400_BAD_REQUEST)
 
         except Exception as e:
             return Response({'status': 'failed', 'message': 'something went wrong'})

@@ -15,7 +15,30 @@
     {% block content %}
 
     <div id="app" class="container">
-      <!--Student create form-->
+
+      <!--Start toast-->
+      <div class="toast-container position-fixed top-0 end-0 p-3">
+        <div
+          id="successToast"
+          class="toast align-items-center text-bg-primary"
+          role="alert"
+          aria-live="assertive"
+          aria-atomic="true"
+        >
+          <div class="d-flex">
+            <div class="toast-body">[[toastMessage]]</div>
+            <button
+              type="button"
+              class="btn-close btn-close-white me-2 m-auto"
+              data-bs-dismiss="toast"
+              aria-label="Close"
+            ></button>
+          </div>
+        </div>
+      </div>
+      <!--End toast-->
+
+      <!--Student create-->
       <div class="row student_create">
         <!-- Start form -->
         <form class="row gx-2 gy-3" @submit.prevent="studentCreateForm">
@@ -154,9 +177,9 @@
 
         <!-- End Form -->
       </div>
+      <!-- End Student create-->
 
-      <!--Student Table-->
-
+      <!--Start Student Table-->
       <div class="row mt-5">
         <table
           class="table table-light table-striped table-hover table-bordered table-sm"
@@ -237,8 +260,9 @@
           </tbody>
         </table>
       </div>
+      <!--End Student table-->
 
-      <!--Make Payment modal-->
+      <!--Start Make Payment modal-->
       <div
         class="modal fade"
         id="paymentModal"
@@ -273,7 +297,7 @@
                       class="form-control"
                       id="courseFee"
                       disabled
-                      :value="studentTableRow.due_amount"
+                      :value="studentTableRow.due_amount - paymentFormData.payment_amount"
                     />
                   </div>
                   <div class="col">
@@ -298,18 +322,18 @@
                   >
                     Close
                   </button>
-                  <button type="submit" class="btn btn-primary">Pay Now</button>
+                  <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Pay Now</button>
                 </div>
               </form>
             </div>
             <div class="footer">
-              <div class="alert alert-primary" role="alert">Payment done</div>
             </div>
           </div>
         </div>
       </div>
+      <!--End Payment Modal-->
 
-      <!--Assign Course-->
+      <!--Start Assign Course-->
       <div
         class="modal fade"
         id="assignCourseModal"
@@ -341,7 +365,7 @@
 
                 <div class="row mb-3">
                   <div class="col-md-12">
-                    <label for="course">Select Course</label>
+                    <label for="course">Select Course *</label>
                     <select
                       class="form-select"
                       v-model="courseAssignFormData.course"
@@ -354,7 +378,7 @@
                         :key="course.id"
                         :value="course.id"
                       >
-                        [[course.name]]-[[course.course_fee]]
+                        [[course.name]]-[[course.course_fee]] Tk
                       </option>
                     </select>
                   </div>
@@ -391,18 +415,18 @@
                   >
                     Close
                   </button>
-                  <button type="submit" class="btn btn-primary">Submit</button>
+                  <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Submit</button>
                 </div>
               </form>
             </div>
             <div class="footer">
-              <div class="alert alert-primary" role="alert">Payment done</div>
             </div>
           </div>
         </div>
       </div>
+      <!--End Assign Course-->
 
-      <!--Payment History-->
+      <!--Start Payment History-->
       <div
         class="modal fade"
         id="paymentHistory"
@@ -454,9 +478,17 @@
             </div>
         </div>
       </div>
+      <div>
+      <!--End Payment History-->
 
-      <!--End #pp-->
+      <!--Start Toast-->
+
+      
+      <!--Start Toast-->
+      
     </div>
+    <!--End #app-->
+
 
     {% endblock content %} {% block script %}
     <script>
@@ -522,10 +554,20 @@
             studentsList: null,
             studentTableRow: {},
             studentPaymentList: [],
-            rowCount: 1,
+            toastMessage: '',
+            toastClass: '',
           };
         },
         methods: {
+           showToast(msg, clasName) {
+            const successToast = document.getElementById("successToast");
+            const toastBootstrap = bootstrap.Toast.getOrCreateInstance(successToast);
+            this.toastMessage = msg
+            this.toastClass = clasName
+            toastBootstrap.show();
+
+          },
+          
           resetForm() {
             this.student = { ...this.blankStudentForm };
           },
@@ -552,10 +594,13 @@
                 this.courseAssignFormData
               )
               .then((response) => {
+                this.showToast(response.data.message, 'text-bg-primary')
                 this.getAllStudent();
+
               })
               .catch((error) => {
-                console.log(error);
+                const errorData = error.response.data
+                this.showToast(errorData.message)
               });
           },
           studentCreateForm() {
@@ -566,9 +611,13 @@
               .then((response) => {
                 this.getAllStudent();
                 this.resetForm();
+                 this.showToast(response.data.message, 'text-bg-primary')
               })
               .catch((error) => {
-                console.log(error);
+                const errorData = error.response.data
+                this.showToast(errorData.message)
+                console.log(errorData.errors.name)
+
               });
           },
 
@@ -583,9 +632,12 @@
               .then((response) => {
                 this.paymentFormData = { ...this.blankPaymentForm };
                 this.getAllStudent();
+                this.showToast(response.data.message, 'text-bg-primary')
+
               })
               .catch((error) => {
-                console.log(error);
+                const errorData = error.response.data
+                this.showToast(errorData.message)
               });
           },
 
