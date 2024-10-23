@@ -31,8 +31,9 @@ class StudentListFilter(ListAPIView):
 
     def get_queryset(self):
 
-        a = self.request.query_params.get('name', None)
-        print(a)
+        q_name = self.request.query_params.get('name', None)
+        q_year = self.request.query_params.get('year', None)
+        q_batch = self.request.query_params.get('batch', None)
 
         current_month = timezone.now().replace(
             day=1)
@@ -43,7 +44,18 @@ class StudentListFilter(ListAPIView):
             payment_date__year=current_month.year
         ).values('id')
 
-        students = Student.objects.select_related('batch').annotate(
+        students = Student.objects.select_related('batch')
+
+        if q_name is not None:
+            students = students.filter(name__icontains=q_name)
+
+        if q_year is not None:
+            students = students.filter(hsc_batch_id=q_year)
+
+        if q_batch is not None:
+            students = students.filter(batch_id=q_batch)
+
+        students = students.annotate(
             total_course_amount=Subquery(
                 StudentEnroll.objects.filter(student=OuterRef('pk')).values('student').annotate(
                     total=Sum('course_fee')
@@ -67,7 +79,7 @@ class StudentListFilter(ListAPIView):
             paid_current_month=Case(
                 When(Exists(current_month_payment_exists), then=Value(True)),
                 default=Value(False)
-            )).values('id', 'name', 'hsc_batch__year', 'total_course_amount', 'total_discount', 'total_payment', 'paid_current_month', 'due_amount', 'batch__name', 'batch__start_time', 'batch__end_time').order_by('-id')
+            )).values('id', 'name', 'hsc_batch__year', 'total_course_amount', 'total_discount', 'total_payment', 'paid_current_month', 'due_amount', 'batch__name', 'batch__start_time', 'batch__end_time').order_by('paid_current_month')
 
         return students
 
