@@ -492,11 +492,13 @@
 
     {% endblock content %} {% block script %}
     <script>
-      const homeTownLIst = JSON.parse("{{home_town_list|escapejs}}");
-      const collegeList = JSON.parse("{{college_list|escapejs}}");
-      const courseList = JSON.parse("{{course_list|escapejs}}");
-      const academicYearList = JSON.parse("{{academic_year_list|escapejs}}");
-      const batchList = JSON.parse("{{batch_list|escapejs}}");
+
+      const homeTownLIst = JSON.parse('{{home_town_list|escapejs}}');
+      const collegeList =  JSON.parse('{{college_list|escapejs}}');
+      const courseList = JSON.parse('{{course_list|safe}}');
+      const academicYearList = JSON.parse('{{academic_year_list|safe}}');
+      const batchList = JSON.parse('{{batch_list|safe}}');
+      
       const { createApp } = Vue;
       createApp({
         mounted() {
@@ -579,7 +581,7 @@
               .get(
                 `http://127.0.0.1:8000/course/student-payment-list/${student.id}/`)
               .then((response) => {
-                this.studentPaymentList = response.data
+                this.studentPaymentList = response.data.results
               })
               .catch((error) => {
                 console.log(error);
