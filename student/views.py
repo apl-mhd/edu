@@ -34,6 +34,7 @@ class StudentListFilter(ListAPIView):
         q_name = self.request.query_params.get('name', None)
         q_year = self.request.query_params.get('year', None)
         q_batch = self.request.query_params.get('batch', None)
+        q = self.request.query_params.get('q', None)
 
         current_month = timezone.now().replace(
             day=1)
@@ -44,18 +45,17 @@ class StudentListFilter(ListAPIView):
             payment_date__year=current_month.year
         ).values('id')
 
-        students = Student.objects.select_related('batch')
+        students = Student.objects
 
-        if q_name is not None:
-            students = students.filter(name__icontains=q_name)
+        if q and q.isdigit():
+            students = students.filter(
+                Q(hsc_batch__year=q))
+        elif q:
+            students = students.filter(
+                Q(name__icontains=q) | Q(batch__name__icontains=q))
 
-        if q_year is not None:
-            students = students.filter(hsc_batch_id=q_year)
 
-        if q_batch is not None:
-            students = students.filter(batch_id=q_batch)
-
-        students = students.annotate(
+        students = students.select_related('batch').select_related('hsc_batch').annotate(
             total_course_amount=Subquery(
                 StudentEnroll.objects.filter(student=OuterRef('pk')).values('student').annotate(
                     total=Sum('course_fee')
@@ -79,7 +79,20 @@ class StudentListFilter(ListAPIView):
             paid_current_month=Case(
                 When(Exists(current_month_payment_exists), then=Value(True)),
                 default=Value(False)
-            )).values('id', 'name', 'hsc_batch__year', 'total_course_amount', 'total_discount', 'total_payment', 'paid_current_month', 'due_amount', 'batch__name', 'batch__start_time', 'batch__end_time').order_by('paid_current_month')
+            )).values('id', 'name', 'hsc_batch__year', 'total_course_amount', 'total_discount', 'total_payment', 'paid_current_month', 'due_amount', 'batch__name', 'batch__start_time', 'batch__end_time')
+        
+        filter_by = self.request.query_params.get('filter_by', None)
+
+        print(self.request.query_params.get)
+    
+        if filter_by and filter_by is not '-':
+            students = students.order_by(filter_by)
+        
+        
+        
+
+        # data = {"name": "Sort by name",
+        #         "batch__name": "Sort by batch", "hsc_batch__year": "Sort by HSC", "due_amount": "Sort by due amount", "paid_current_month": "Sort by current month"}
 
         return students
 

@@ -39,7 +39,7 @@
       <!--End toast-->
 
       <!--Student create-->
-      <div class="row student_create">
+      <div class="row student_create mb-5">
         <!-- Start form -->
         <form class="row gx-2 gy-3" @submit.prevent="studentCreateForm">
           <div class="col-3">
@@ -179,6 +179,26 @@
       </div>
       <!-- End Student create-->
 
+      <!-- Search Student-->
+      <div class="d-flex justify-content-start mt-3">
+        <div class="me-2">
+          <select @change="getAllStudent" v-model="filterBy" action="" class="form-select">
+            <option value="">Filter By </option>
+            <option :value="filter.id" v-for="filter in filters" :key="filter.id">[[filter.value]]</option>
+          </select>
+        </div>
+        <div class="me-2">
+          <select @change="getAllStudent" v-model="sortBy"  action="" class="form-select">
+            <option value="" selected >ASC</option>
+            <option value="-" >DESC</option>
+          </select>
+        </div>
+        <div>
+          <input type="input" v-model="q" class="form-control" @input="getAllStudent">
+        </div>
+      </div>
+      <!-- End Search Student-->
+
       <!--Start Student Table-->
       <div class="row mt-5">
         <table
@@ -187,7 +207,9 @@
           <thead class="table-dark">
             <tr>
               <th scope="col">ID</th>
-              <th scope="col">Name</th>
+              <th scope="col">
+                Name
+            </th>
               <th scope="col">Batch</th>
               <th scope="col">HSC Batch</th>
               <th scope="col">Due Amount</th>
@@ -506,6 +528,28 @@
         },
         data() {
           return {
+            filters: [
+            {
+              id: "name",
+              value: "Name",
+            },
+            {
+              id: "batch__name",
+              value: "Batch",
+            },
+            {
+              id: "hsc_batch__year",
+              value: "HSC",
+            },
+            {
+              id: "due_amount",
+              value: "Due amount",
+            },
+            {
+              id: "paid_current_month",
+              value: "Paid",
+            }
+            ],
             blankStudentForm: {
               name: null,
               phone: null,
@@ -558,6 +602,10 @@
             studentPaymentList: [],
             toastMessage: '',
             toastClass: '',
+            q: '',
+            filterBy: '',
+            sortBy: '',
+
           };
         },
         methods: {
@@ -644,12 +692,13 @@
           },
 
           getAllStudent() {
+            console.log(`http://127.0.0.1:8000/student/filter/?q=${this.q}&filter_by=${this.filterBy}`)
             axios.defaults.xsrfCookieName = "csrftoken";
             axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
             axios
-              .get("http://127.0.0.1:8000/student/all/")
+              .get(`http://127.0.0.1:8000/student/filter/?q=${this.q}&filter_by=${this.sortBy}${this.filterBy}`)
               .then((response) => {
-                this.studentsList = response.data;
+                this.studentsList = response.data.results;
               })
               .catch((error) => {
                 console.log(error);
