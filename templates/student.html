@@ -15,6 +15,148 @@
     {% block content %}
 
     <div id="app" class="container">
+      <!--Student create Side bar ofcanvas form-->
+      <div class="offcanvas offcanvas-end" index="-1" id="studentForm" aria-labelledby="studentFormLabel">
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title" id="studentFormLabel">Create Student</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+          <form class="row gx-3 gy-4" @submit.prevent="studentCreateForm">
+            <div class="col-6">
+                <label for="name" class="form-label">Name *</label>
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Mahmud"
+                  v-model="student.name"
+                  class="form-control"
+                  id="name"
+                />
+              </div>
+            <div class="col-6">
+              <label for="phone" class="form-label">Phone *</label>
+              <input
+                type="text"
+                name="phone"
+                placeholder="015-xx-xx-xx-xx"
+                v-model="student.phone"
+                class="form-control"
+                id="phone"
+              />
+            </div>
+            <div class="col-6">
+              <label for="ParentsPhone" class="form-label">Gurdian Phone</label>
+              <input
+                type="text"
+                name="gurdian_phone"
+                placeholder="017-xx-xx-xx-xx"
+                v-model="student.gurdian_phone"
+                class="form-control"
+                id="ParentsPhone"
+              />
+            </div>
+            <div class="col-6">
+              <label for="email" class="form-label">Email</label>
+              <input
+                type="email"
+                placeholder="contact@mail.com"
+                v-model="student.email"
+                name="email"
+                class="form-control"
+                id="email"
+              />
+            </div>
+            <div class="col-6">
+              <label for="gender" class="form-label">Gender *</label>
+              <select
+                class="form-select"
+                v-model="student.gender"
+                name="gender"
+                id="gender"
+              >
+                <option disabled value="null">Select Gender</option>
+                <option value="M">Male</option>
+                <option value="F">Female</option>
+              </select>
+            </div>
+            <div class="col-6">
+              <label for="studetn-course" class="form-label">Batch</label>
+              <select
+                class="form-select"
+                v-model="student.batch"
+                name="course"
+                id="studetn-batch"
+              >
+                <option disabled value="null">Select Batch</option>
+                <option
+                  v-for="batch in batches"
+                  :key="batch.id"
+                  :value="batch.id"
+                >
+                  [[batch.title]]
+                </option>
+              </select>
+            </div>
+            <div class="col-6">
+              <label for="academicYear" class="form-label">HSC Batch *</label>
+              <select
+                class="form-select"
+                name="hsc_batch"
+                v-model="student.hsc_batch"
+                id="academicYear"
+              >
+                <option disabled value="null">Select Batch</option>
+                <option
+                  v-for="year in academicYears"
+                  :key="year.id"
+                  :value="year.id"
+                >
+                  HSC Batch [[year.year]] -[[year.year+1]]
+                </option>
+              </select>
+            </div>
+            <div class="col-6">
+              <label for="location" class="form-label">Home Town</label>
+              <select
+                class="form-select"
+                name="home_town"
+                v-model="student.home_town"
+                id="location"
+              >
+                <option disabled value="null">Select Home Town</option>
+                <option v-for="town in homeTowns" :key="town.id" :value="town.id">
+                  [[town.name]]
+                </option>
+              </select>
+            </div>
+            <div class="col-6">
+              <label for="college" class="form-label">College</label>
+              <select
+                class="form-select"
+                name="college"
+                v-model="student.college"
+                id="college"
+              >
+                <option disabled value="null">Select College</option>
+                <option
+                  v-for="college in colleges"
+                  :key="college.id"
+                  :value="college.id"
+                >
+                  [[college.name]]
+                </option>
+              </select>
+            </div>
+            <div class="col-12 d-flex justify-content-between">
+              <button type="submit" class="btn btn-primary">Submit</button>
+              <button type="reset" class="btn btn-danger me-2" @click="resetForm">
+                Reset
+              </button>
+            </div>
+        </form>
+        </div>
+      </div>
 
       <!--Start toast-->
       <div class="toast-container position-fixed top-0 end-0 p-3">
@@ -39,162 +181,30 @@
       <!--End toast-->
 
       <!--Student create-->
-      <div class="row student_create mb-5">
-        <!-- Start form -->
-        <form class="row gx-2 gy-3" @submit.prevent="studentCreateForm">
-          <div class="col-3">
-            <label for="name" class="form-label">Name *</label>
-            <input
-              type="text"
-              name="name"
-              placeholder="Mahmud"
-              v-model="student.name"
-              class="form-control"
-              id="name"
-            />
-          </div>
-          <div class="col-3">
-            <label for="phone" class="form-label">Phone *</label>
-            <input
-              type="text"
-              name="phone"
-              placeholder="015-xx-xx-xx-xx"
-              v-model="student.phone"
-              class="form-control"
-              id="phone"
-            />
-          </div>
-          <div class="col-3">
-            <label for="ParentsPhone" class="form-label">Gurdian Phone</label>
-            <input
-              type="text"
-              name="gurdian_phone"
-              placeholder="017-xx-xx-xx-xx"
-              v-model="student.gurdian_phone"
-              class="form-control"
-              id="ParentsPhone"
-            />
-          </div>
-          <div class="col-3">
-            <label for="email" class="form-label">Email</label>
-            <input
-              type="email"
-              placeholder="contact@mail.com"
-              v-model="student.email"
-              name="email"
-              class="form-control"
-              id="email"
-            />
-          </div>
-          <div class="col-3">
-            <label for="gender" class="form-label">Gender *</label>
-            <select
-              class="form-select"
-              v-model="student.gender"
-              name="gender"
-              id="gender"
-            >
-              <option disabled value="null">Select Gender</option>
-              <option value="M">Male</option>
-              <option value="F">Female</option>
-            </select>
-          </div>
-          <div class="col-3">
-            <label for="studetn-course" class="form-label">Batch</label>
-            <select
-              class="form-select"
-              v-model="student.batch"
-              name="course"
-              id="studetn-batch"
-            >
-              <option disabled value="null">Select Batch</option>
-              <option
-                v-for="batch in batches"
-                :key="batch.id"
-                :value="batch.id"
-              >
-                [[batch.title]]
-              </option>
-            </select>
-          </div>
-          <div class="col-3">
-            <label for="academicYear" class="form-label">HSC Batch *</label>
-            <select
-              class="form-select"
-              name="hsc_batch"
-              v-model="student.hsc_batch"
-              id="academicYear"
-            >
-              <option disabled value="null">Select Batch</option>
-              <option
-                v-for="year in academicYears"
-                :key="year.id"
-                :value="year.id"
-              >
-                HSC Batch [[year.year]] -[[year.year+1]]
-              </option>
-            </select>
-          </div>
-          <div class="col-3">
-            <label for="location" class="form-label">Home Town</label>
-            <select
-              class="form-select"
-              name="home_town"
-              v-model="student.home_town"
-              id="location"
-            >
-              <option disabled value="null">Select Home Town</option>
-              <option v-for="town in homeTowns" :key="town.id" :value="town.id">
-                [[town.name]]
-              </option>
-            </select>
-          </div>
-          <div class="col-3">
-            <label for="college" class="form-label">College</label>
-            <select
-              class="form-select"
-              name="college"
-              v-model="student.college"
-              id="college"
-            >
-              <option disabled value="null">Select College</option>
-              <option
-                v-for="college in colleges"
-                :key="college.id"
-                :value="college.id"
-              >
-                [[college.name]]
-              </option>
-            </select>
-          </div>
-          <div class="col-12">
-            <button type="reset" class="btn btn-danger" @click="resetForm">
-              Reset
-            </button>
-            <button type="submit" class="btn btn-primary">Submit</button>
-          </div>
-        </form>
-
-        <!-- End Form -->
-      </div>
+     
       <!-- End Student create-->
 
       <!-- Search Student-->
-      <div class="d-flex justify-content-start mt-3">
-        <div class="me-2">
-          <select @change="getAllStudent" v-model="filterBy" action="" class="form-select">
-            <option value="">Filter By </option>
-            <option :value="filter.id" v-for="filter in filters" :key="filter.id">[[filter.value]]</option>
-          </select>
-        </div>
-        <div class="me-2">
-          <select @change="getAllStudent" v-model="sortBy"  action="" class="form-select">
-            <option value="" selected >ASC</option>
-            <option value="-" >DESC</option>
-          </select>
+      <div class="d-flex justify-content-between mt-3">
+        <div class="d-flex">
+          <div class="me-2">
+            <select @change="getAllStudent" v-model="filterBy" action="" class="form-select">
+              <option value="">Filter By </option>
+              <option :value="filter.id" v-for="filter in filters" :key="filter.id">[[filter.value]]</option>
+            </select>
+          </div>
+          <div class="me-2">
+            <select @change="getAllStudent" v-model="sortBy"  action="" class="form-select">
+              <option value="" selected >ASC</option>
+              <option value="-" >DESC</option>
+            </select>
+          </div>
+          <div>
+            <input placeholder="Search..." type="input" v-model="q" class="form-control input-sm" @input="getAllStudent">
+          </div>
         </div>
         <div>
-          <input type="input" v-model="q" class="form-control" @input="getAllStudent">
+          <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#studentForm" aria-controls="studentForm">Add Student</button>
         </div>
       </div>
       <!-- End Search Student-->

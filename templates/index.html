@@ -6,22 +6,73 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    {% block css %}
-    {% endblock css %}
+    {% block css %} {% endblock css %}
+    <style>
+      
+    </style>
   </head>
   <body>
     {% block content %}
 
+    <div id="app" class="container">
+      <!--Student create Side bar ofcanvas form-->
+     
+
+      <!--Start toast-->
+     
+      <!--End toast-->
+
+      <!--Student create-->
+     
+      <!-- End Student create-->
+
+      <!-- Search Student-->
     
-    
+      <!-- End Search Student-->
+
+      <!--Start Student Table-->
+     
+      <!--End Student table-->
+
+      <!--Start Make Payment modal-->
+     
+      <!--End Payment Modal-->
+
+      <!--Start Assign Course-->
+     
+      <!--End Assign Course-->
+
+      <!--Start Payment History-->
+      
+      <!--End Payment History-->
+
+      <!--Start Toast-->
+
+      
+      <!--Start Toast-->
+      
+    <!--End #app-->
+
+
     {% endblock content %} {% block script %}
     <script>
+      /*
+      const collegeList =  JSON.parse('{{college_list|escapejs}}');
+      const courseList = JSON.parse('{{course_list|safe}}');
+      */
+      
       const { createApp } = Vue;
       createApp({
+        mounted() {
+        },
         data() {
           return {
-            message: "apel",
+            
+
           };
+        },
+        methods: {
+           
         },
         delimiters: ["[[", "]]"],
       }).mount("#app");
