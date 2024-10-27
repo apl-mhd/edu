@@ -7,73 +7,129 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     {% block css %} {% endblock css %}
-    <style>
-      
-    </style>
+    <style></style>
   </head>
   <body>
     {% block content %}
 
+    <!-- Start #app -->
     <div id="app" class="container">
-      <!--Student create Side bar ofcanvas form-->
-     
+      <div class="row">
+        <!--card 1-->
+        <div class="col-3">
+          <div class="card">
+            <div class="card-body">
+              <div class="card-title">
+                <h5>Total Collection</h5>
+                <hr />
+              </div>
+              <div class="card-text">
+                <div class="d-flex justify-content-evenly"></div>
+                <h5>
+                  <i class="fa-solid fa-wallet"></i>
+                  [[data.total_payment_amount]]
+                </h5>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--End card 1-->
 
-      <!--Start toast-->
-     
-      <!--End toast-->
+        <!--card 2-->
+        <div class="col-3">
+          <div class="card">
+            <div class="card-body">
+              <div class="card-title">
+                <h5>Today's Collection</h5>
+                <hr />
+              </div>
+              <div class="card-text">
+                <div class="d-flex justify-content-around">
+                  <h5>
+                    <i class="fa-solid fa-dollar-sign"></i>
+                    [[data.today.total_payment_amount]]
+                  </h5>
+                  <h5>
+                    <i class="fa-solid fa-graduation-cap"> </i>
+                    [[data.today.total_student]]
+                  </h5>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--End card 2-->
 
-      <!--Student create-->
-     
-      <!-- End Student create-->
+        <!--Start card 3-->
+        <div class="col-3">
+          <div class="card">
+            <div class="card-body">
+              <div class="card-title">
+                <h5>Curent Month</h5>
+                <hr />
+              </div>
+              <div class="card-text">
+                <div class="d-flex justify-content-around">
+                  <h5>
+                    <i class="fa-solid fa-dollar-sign"></i>
+                    [[data.month.total_payment_amount]]
+                  </h5>
+                  <h5>
+                    <i class="fa-solid fa-graduation-cap"> </i>
+                    [[data.month.total_student]]
+                  </h5>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--End card 3-->
 
-      <!-- Search Student-->
-    
-      <!-- End Search Student-->
-
-      <!--Start Student Table-->
-     
-      <!--End Student table-->
-
-      <!--Start Make Payment modal-->
-     
-      <!--End Payment Modal-->
-
-      <!--Start Assign Course-->
-     
-      <!--End Assign Course-->
-
-      <!--Start Payment History-->
-      
-      <!--End Payment History-->
-
-      <!--Start Toast-->
-
-      
-      <!--Start Toast-->
-      
-    <!--End #app-->
-
+        <!--card 4-->
+        <div class="col-3">
+          <div class="card">
+            <div class="card-body">
+              <div class="card-title">
+                <h5>Not This month</h5>
+                <hr />
+              </div>
+              <div class="card-text">
+                <div class="d-flex justify-content-around">
+                  <h5>
+                    <i class="fa-solid fa-dollar-sign"></i>
+                    [[data.today.total_payment_amount]]
+                  </h5>
+                  <h5>
+                    <i class="fa-solid fa-graduation-cap"> </i>
+                    [[data.today.total_student]]
+                  </h5>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--card 4-->
+      </div>
+    </div>
+    <!-- End #app -->
 
     {% endblock content %} {% block script %}
     <script>
+      const data = JSON.parse("{{data|escapejs}}");
+      console.log(data);
       /*
-      const collegeList =  JSON.parse('{{college_list|escapejs}}');
       const courseList = JSON.parse('{{course_list|safe}}');
       */
-      
+
       const { createApp } = Vue;
       createApp({
-        mounted() {
-        },
+        mounted() {},
         data() {
           return {
-            
-
+            data: data,
           };
         },
-        methods: {
-           
-        },
+        methods: {},
         delimiters: ["[[", "]]"],
       }).mount("#app");
     </script>
