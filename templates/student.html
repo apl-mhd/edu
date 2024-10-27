@@ -231,7 +231,10 @@
             <tr v-for="(i, index) in studentsList" :key="i.id" :class="i.paid_current_month ? 'table-success': 'table-danger'">
               <td scope="row">[[index+1]]</td>
 
-              <td>[[i.name]]</td>
+              <td>
+                [[i.name]] <br>
+                [[i.id]]
+              </td>
               <td> 
                 <small class="">[[i.batch__name]]</small> <br>
                 <small>[[ i.batch__start_time]] -[[ i.batch__end_time]]</small>
@@ -243,7 +246,8 @@
                 "></span>
 
                 <span class="badge ml-3 text-bg-info" @click="getPaymentHistory(i)" data-bs-toggle="modal"
-                data-bs-target="#paymentHistory">Payment History</span>
+                data-bs-target="#paymentHistory">Payment History</span><br>
+                <small>[[i.latest_payment]]</small>
               </td>
               <td>
                 <div class="btn-group" role="group">
@@ -558,6 +562,10 @@
             {
               id: "paid_current_month",
               value: "Paid",
+            },
+            {
+              id: "latest_payment",
+              value: "Latest payment",
             }
             ],
             blankStudentForm: {
@@ -615,6 +623,7 @@
             q: '',
             filterBy: '',
             sortBy: '',
+            latestPayment: ''
 
           };
         },

@@ -16,7 +16,7 @@ from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
 from django.views.generic.base import TemplateView
 # Create your views here.
-from django.db.models import Subquery, Sum, OuterRef, When, Case, Exists, Value, F, CharField, Q
+from django.db.models import Subquery, Sum, OuterRef, When, Case, Exists, Value, F, CharField, Q, Max
 from django.utils import timezone
 
 from django.db.models.functions import Coalesce, Concat, Cast
@@ -72,6 +72,11 @@ class StudentListFilter(ListAPIView):
                     total=Sum('payment_amount')
                 ).values('total')
             ),
+            latest_payment=Subquery(
+                Payment.objects.filter(student=OuterRef('pk')).values('student').annotate(
+                    total=Max('payment_date')
+                ).values('total')
+            ),
             due_amount=Coalesce(F('total_course_amount'), Value(0)) -
             Coalesce(F('total_discount'), Value(0)) -
             Coalesce(F('total_payment'), Value(0)),
@@ -79,7 +84,7 @@ class StudentListFilter(ListAPIView):
             paid_current_month=Case(
                 When(Exists(current_month_payment_exists), then=Value(True)),
                 default=Value(False)
-            )).values('id', 'name', 'hsc_batch__year', 'total_course_amount', 'total_discount', 'total_payment', 'paid_current_month', 'due_amount', 'batch__name', 'batch__start_time', 'batch__end_time')
+            )).values('id', 'name', 'hsc_batch__year', 'total_course_amount', 'total_discount', 'total_payment', 'paid_current_month', 'due_amount', 'batch__name', 'batch__start_time', 'batch__end_time', 'latest_payment')
         
         filter_by = self.request.query_params.get('filter_by', None)
 

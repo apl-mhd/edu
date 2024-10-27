@@ -3,12 +3,64 @@ from student.models import *
 from django.utils import timezone
 from django.db.models import F, Max, Q, Avg, Sum, Count, Subquery, OuterRef, Case, When, Value, CharField, Exists
 from django.db import connection
+from django.db.models.functions import Coalesce
 
 
 def run():
 
-    enroll = StudentEnroll.objects.all().first()
-    print(enroll.get_section_details())
+    payment = Payment.objects.filter(student=OuterRef('pk')).values('student').annotate(
+        total=Sum('payment_amount')).values('total')
+
+    discount = Discount.objects.filter(student=OuterRef('pk')).values('student').annotate(
+        total=Sum('discount_amount')).values('total')
+
+    bill = StudentEnroll.objects.filter(student=OuterRef('pk')).values('student').annotate(
+        total=Sum('course_fee')).values('total')
+
+    students = Student.objects.values('batch').annotate(
+        total_payment=Subquery(payment),
+        total_bill=Subquery(bill),
+        total_discount=Subquery(discount),
+        yes_no=Case(
+            When(Exists(payment), then=Subquery(payment)),
+            default=Value(-1)
+        ),
+
+        y_n=Coalesce(Subquery(payment), Value(0)),
+    ).values('id', 'total_bill', 'total_payment', 'total_discount')
+
+    t = Student.objects.filter(batch=1).annotate(
+        total_payment=Subquery(payment),
+        total_bill=Coalesce(Subquery(bill), Value(0)),
+        total_discount=Subquery(discount),
+        yes_no=Case(
+            When(Exists(payment), then=Subquery(payment)),
+            default=Value(-1)
+        ),
+
+        y_n=Coalesce(Subquery(payment), Value(0)),
+    ).values('total_payment', 'total_bill', 'total_discount').aggregate(all_payment=Sum('total_payment'), all_bill=Sum('total_bill'), all_discount=Sum('total_discount'))
+
+    allp = Payment.objects.aggregate(total_payment=Sum('payment_amount'))
+    alld = Discount.objects.aggregate(
+        total_discount=Sum('discount_amount'))
+    print(allp, alld)
+    print(t)
+
+    s = Student.objects.filter(batch__isnull=True).values('id')
+    b = StudentBilling.objects.all().values('student')
+    # print(s)
+    # print(b)
+    # for i in students:
+    #     print(
+    #         f"{i['id']}--{i['total_bill']}--{i['total_payment']}--{i['total_discount']}")
+
+    # print(connection.queries)
+
+    # for i in student:
+    #     print(i.id, '---', i.y_n)
+
+    # print(connection.queries)
 
     # batch = Batch.objects.prefetch_related('days').all()
 
