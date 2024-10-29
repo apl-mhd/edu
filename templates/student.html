@@ -16,13 +16,15 @@
 
     <div id="app" class="container">
       <!--Student create Side bar ofcanvas form-->
-      <div class="offcanvas offcanvas-end" index="-1" id="studentForm" aria-labelledby="studentFormLabel">
+      <div class="offcanvas offcanvas-end" ref  ="offCanvas" index="-1" id="studentForm" aria-labelledby="studentFormLabel">
         <div class="offcanvas-header">
-          <h5 class="offcanvas-title" id="studentFormLabel">Create Student</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+          <h5 class="offcanvas-title" id="studentFormLabel">
+            [[student.id ? 'Update Student' : 'Create Student']]
+          </h5>
+          <button type="button" class="btn-close" @click="hideOffcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
-          <form class="row gx-3 gy-4" @submit.prevent="studentCreateForm">
+          <form class="row gx-3 gy-4" @submit.prevent="studentForm">
             <div class="col-6">
                 <label for="name" class="form-label">Name *</label>
                 <input
@@ -149,8 +151,11 @@
               </select>
             </div>
             <div class="col-12 d-flex justify-content-between">
-              <button type="submit" class="btn btn-primary">Submit</button>
-              <button type="reset" class="btn btn-danger me-2" @click="resetForm">
+              <button type="submit" class="btn btn-primary">
+                            [[student.id ? 'Update' : 'Create']]
+
+              </button>
+              <button :disabled="student.id" type="reset" class="btn btn-danger me-2" @click="resetForm">
                 Reset
               </button>
             </div>
@@ -287,7 +292,7 @@
                     </li>
                     <hr />
                     <li>
-                      <a href="#" class="dropdown-item">Receive Material</a>
+                      <a href="#" class="dropdown-item" @click="editStudent(i.id)">Edit</a>
                     </li>
                   </ul>
                 </div>
@@ -539,9 +544,16 @@
       createApp({
         mounted() {
           this.getAllStudent();
+
+           this.offcanvasInstance = new bootstrap.Offcanvas('#studentForm')
+
+
         },
         data() {
           return {
+
+            offcanvasInstance:null,
+
             filters: [
             {
               id: "name",
@@ -569,6 +581,7 @@
             }
             ],
             blankStudentForm: {
+              id: null,
               name: null,
               phone: null,
               gurdian_phone: null,
@@ -590,6 +603,7 @@
               payment_amount: null,
             },
             student: {
+              id: null,
               name: null,
               phone: null,
               gurdian_phone: null,
@@ -628,6 +642,29 @@
           };
         },
         methods: {
+          
+          toggleOffcanvas(){
+            this.offcanvasInstance.toggle()
+          },
+          hideOffcanvas(){
+            this.offcanvasInstance.toggle()
+            this.resetForm()
+          },
+
+          editStudent(studentId){
+            axios.defaults.xsrfCookieName = "csrftoken";
+            axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
+            axios.get(`http://127.0.0.1:8000/student/${studentId}/`)
+            .then(response =>{
+              this.student = response.data
+              this.toggleOffcanvas()
+                 
+             
+            }).catch(error =>{
+
+            })
+
+          },
            showToast(msg, clasName) {
             const successToast = document.getElementById("successToast");
             const toastBootstrap = bootstrap.Toast.getOrCreateInstance(successToast);
@@ -672,22 +709,41 @@
                 this.showToast(errorData.message)
               });
           },
-          studentCreateForm() {
+          studentForm() {
             axios.defaults.xsrfCookieName = "csrftoken";
             axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
-            axios
-              .post("http://127.0.0.1:8000/student/test/", this.student)
-              .then((response) => {
+            if(this.student.id){
+              axios.put(`http://127.0.0.1:8000/student/${this.student.id}/`, this.student)
+              .then(response =>{
+                const bsOffcanvas = new bootstrap.Offcanvas('#studentForm')
+                bsOffcanvas.hide()     
                 this.getAllStudent();
                 this.resetForm();
-                 this.showToast(response.data.message, 'text-bg-primary')
-              })
-              .catch((error) => {
-                const errorData = error.response.data
-                this.showToast(errorData.message)
-                console.log(errorData.errors.name)
+                this.showToast("successfully updated", 'text-bg-primary')
 
-              });
+                this.toggleOffcanvas()
+
+                          
+              }).catch(error =>{
+
+              })}
+            
+            else {
+              axios
+                .post("http://127.0.0.1:8000/student/test/", this.student)
+                .then((response) => {
+                  this.getAllStudent();
+                  this.resetForm();
+                  this.showToast(response.data.message, 'text-bg-primary')
+                })
+                .catch((error) => {
+                  const errorData = error.response.data
+                  this.showToast(errorData.message)
+                  console.log(errorData.errors.name)
+                  this.toggleOffcanvas()
+
+                });
+              }
           },
 
           submitPaymentForm() {

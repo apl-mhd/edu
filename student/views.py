@@ -13,7 +13,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView, RetrieveUpdateAPIView
 from django.views.generic.base import TemplateView
 # Create your views here.
 from django.db.models import Subquery, Sum, OuterRef, When, Case, Exists, Value, F, CharField, Q, Max
@@ -24,6 +24,11 @@ from rest_framework.pagination import PageNumberPagination, LimitOffsetPaginatio
 
 
 # class StudentFilter(APIView):
+
+class StudentDetailView(RetrieveUpdateAPIView):
+    queryset = Student.objects.all()
+    serializer_class = StudentSerializer
+
 
 class StudentListFilter(ListAPIView):
     # serializer_class = PaymentSerializer
@@ -53,7 +58,6 @@ class StudentListFilter(ListAPIView):
         elif q:
             students = students.filter(
                 Q(name__icontains=q) | Q(batch__name__icontains=q))
-
 
         students = students.select_related('batch').select_related('hsc_batch').annotate(
             total_course_amount=Subquery(
@@ -92,9 +96,6 @@ class StudentListFilter(ListAPIView):
     
         if filter_by and filter_by is not '-':
             students = students.order_by(filter_by)
-        
-        
-        
 
         # data = {"name": "Sort by name",
         #         "batch__name": "Sort by batch", "hsc_batch__year": "Sort by HSC", "due_amount": "Sort by due amount", "paid_current_month": "Sort by current month"}
