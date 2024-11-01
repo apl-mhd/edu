@@ -35,6 +35,23 @@ class StudentSerializer(serializers.ModelSerializer):
         model = Student
         fields = '__all__'
 
+    def create(self, validated_data):
+
+        hsc_batch = validated_data['hsc_batch']
+
+        student = Student.objects.filter(
+            hsc_batch=hsc_batch).order_by('-id').first()
+
+        if student:
+            last_roll = student.student_roll
+            student_roll = last_roll+1
+        else:
+            student_roll = int(str(hsc_batch.year % 100)+str("0001"))
+
+        validated_data['student_roll'] = student_roll
+
+        return super().create(validated_data)
+
 
 # class StudentSerializer(serializers.Serializer):
 #     name = serializers.CharField()

@@ -59,7 +59,7 @@ class StudentListFilter(ListAPIView):
             students = students.filter(
                 Q(name__icontains=q) | Q(batch__name__icontains=q))
 
-        students = students.select_related('batch').select_related('hsc_batch').annotate(
+        students = students.filter().select_related('batch').select_related('hsc_batch').annotate(
             total_course_amount=Subquery(
                 StudentEnroll.objects.filter(student=OuterRef('pk')).values('student').annotate(
                     total=Sum('course_fee')
@@ -88,12 +88,12 @@ class StudentListFilter(ListAPIView):
             paid_current_month=Case(
                 When(Exists(current_month_payment_exists), then=Value(True)),
                 default=Value(False)
-            )).values('id', 'name', 'hsc_batch__year', 'total_course_amount', 'total_discount', 'total_payment', 'paid_current_month', 'due_amount', 'batch__name', 'batch__start_time', 'batch__end_time', 'latest_payment')
-        
+            )).values('id', 'name', 'student_roll', 'hsc_batch__year', 'total_course_amount', 'total_discount', 'total_payment', 'paid_current_month', 'due_amount', 'batch__name', 'batch__start_time', 'batch__end_time', 'latest_payment')
+
         filter_by = self.request.query_params.get('filter_by', None)
 
         print(self.request.query_params.get)
-    
+
         if filter_by and filter_by is not '-':
             students = students.order_by(filter_by)
 
@@ -228,12 +228,11 @@ class StudentCreateView(APIView):
                 serializer_data.save()
                 return Response(data={"message": "Successfully student created.", "data": serializer_data.data}, status=status.HTTP_201_CREATED)
             else:
-                for i in serializer_data.errors:
-                    print(i)
+
                 return Response(data={"message": "Fill correctly all the required Field", "errors": serializer_data.errors}, status=status.HTTP_400_BAD_REQUEST)
 
         except Exception as e:
-            return Response({'status': 'failed', 'message': 'something went wrong'})
+            return Response({'status': 'failed', 'message': 'something went wrong', 'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 # Not needed

@@ -8,47 +8,67 @@ from django.db.models.functions import Coalesce
 
 def run():
 
-    payment = Payment.objects.filter(student=OuterRef('pk')).values('student').annotate(
-        total=Sum('payment_amount')).values('total')
+    hsc_batch = AcademicYear.objects.filter(pk=2).first()
 
-    discount = Discount.objects.filter(student=OuterRef('pk')).values('student').annotate(
-        total=Sum('discount_amount')).values('total')
 
-    bill = StudentEnroll.objects.filter(student=OuterRef('pk')).values('student').annotate(
-        total=Sum('course_fee')).values('total')
+    student = Student.objects.filter(
+        hsc_batch=hsc_batch).order_by('-id').first()
 
-    students = Student.objects.values('batch').annotate(
-        total_payment=Subquery(payment),
-        total_bill=Subquery(bill),
-        total_discount=Subquery(discount),
-        yes_no=Case(
-            When(Exists(payment), then=Subquery(payment)),
-            default=Value(-1)
-        ),
+    student_roll = None
+    if student:
+        last_roll = student.student_roll
+        student_roll = last_roll+1
+    else:
+        print("else")
+        student_roll = int(str(hsc_batch.year % 100)+str("0001"))
 
-        y_n=Coalesce(Subquery(payment), Value(0)),
-    ).values('id', 'total_bill', 'total_payment', 'total_discount')
+    print(student_roll)
 
-    t = Student.objects.filter(batch=1).annotate(
-        total_payment=Subquery(payment),
-        total_bill=Coalesce(Subquery(bill), Value(0)),
-        total_discount=Subquery(discount),
-        yes_no=Case(
-            When(Exists(payment), then=Subquery(payment)),
-            default=Value(-1)
-        ),
+    ## Important#
+    # payment = Payment.objects.filter(student=OuterRef('pk')).values('student').annotate(
+    #     total=Sum('payment_amount')).values('total')
 
-        y_n=Coalesce(Subquery(payment), Value(0)),
-    ).values('total_payment', 'total_bill', 'total_discount').aggregate(all_payment=Sum('total_payment'), all_bill=Sum('total_bill'), all_discount=Sum('total_discount'))
+    # discount = Discount.objects.filter(student=OuterRef('pk')).values('student').annotate(
+    #     total=Sum('discount_amount')).values('total')
 
-    allp = Payment.objects.aggregate(total_payment=Sum('payment_amount'))
-    alld = Discount.objects.aggregate(
-        total_discount=Sum('discount_amount'))
-    print(allp, alld)
-    print(t)
+    # bill = StudentEnroll.objects.filter(student=OuterRef('pk')).values('student').annotate(
+    #     total=Sum('course_fee')).values('total')
 
-    s = Student.objects.filter(batch__isnull=True).values('id')
-    b = StudentBilling.objects.all().values('student')
+    # students = Student.objects.values('batch').annotate(
+    #     total_payment=Subquery(payment),
+    #     total_bill=Subquery(bill),
+    #     total_discount=Subquery(discount),
+    #     yes_no=Case(
+    #         When(Exists(payment), then=Subquery(payment)),
+    #         default=Value(-1)
+    #     ),
+
+    #     y_n=Coalesce(Subquery(payment), Value(0)),
+    # ).values('id', 'total_bill', 'total_payment', 'total_discount')
+
+    # t = Student.objects.filter(batch=1).annotate(
+    #     total_payment=Subquery(payment),
+    #     total_bill=Coalesce(Subquery(bill), Value(0)),
+    #     total_discount=Subquery(discount),
+    #     yes_no=Case(
+    #         When(Exists(payment), then=Subquery(payment)),
+    #         default=Value(-1)
+    #     ),
+
+    #     y_n=Coalesce(Subquery(payment), Value(0)),
+    # ).values('total_payment', 'total_bill', 'total_discount').aggregate(all_payment=Sum('total_payment'), all_bill=Sum('total_bill'), all_discount=Sum('total_discount'))
+
+    # allp = Payment.objects.aggregate(total_payment=Sum('payment_amount'))
+    # alld = Discount.objects.aggregate(
+    #     total_discount=Sum('discount_amount'))
+    # print(allp, alld)
+    # print(t)
+
+    # s = Student.objects.filter(batch__isnull=True).values('id')
+    # b = StudentBilling.objects.all().values('student')
+
+    ## Important#
+
     # print(s)
     # print(b)
     # for i in students:

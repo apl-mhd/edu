@@ -1,5 +1,6 @@
 from django.db import models
 from address.models import College, District
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 
 class Day(models.Model):
@@ -45,7 +46,9 @@ class Batch(models.Model):
 
 
 class AcademicYear(models.Model):
-    year = models.IntegerField(unique=True)
+    year = models.IntegerField(
+        unique=True,
+        validators=[MinValueValidator(2010), MaxValueValidator(2050)])
     status = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -72,6 +75,7 @@ class Student(models.Model):
         ('M', 'Male'),
         ('F', 'Female')
     ]
+    student_roll = models.IntegerField(null=True, blank=True, unique=True)
     name = models.CharField(max_length=30)
     gender = models.CharField(
         max_length=1, choices=GENDER_CHOICES, null=True, blank=True)
@@ -85,8 +89,8 @@ class Student(models.Model):
         College, on_delete=models.CASCADE, null=True, blank=True)
     ssc_batch = models.ForeignKey(AcademicYear, null=True,
                                   blank=True, on_delete=models.CASCADE, related_name='ssc_batch')
-    hsc_batch = models.ForeignKey(AcademicYear, null=True,
-                                  blank=True, on_delete=models.CASCADE, related_name='hsc_batch')
+    hsc_batch = models.ForeignKey(
+        AcademicYear, on_delete=models.CASCADE, related_name='hsc_batch')
     ssc_gpa = models.DecimalField(
         max_digits=4, decimal_places=2, null=True, blank=True)
     hsc_gpa = models.DecimalField(
