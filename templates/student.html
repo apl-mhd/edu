@@ -185,10 +185,6 @@
       </div>
       <!--End toast-->
 
-      <!--Student create-->
-     
-      <!-- End Student create-->
-
       <!-- Search Student-->
       <div class="d-flex justify-content-between mt-3">
         <div class="d-flex">
@@ -203,6 +199,23 @@
               <option value="" selected >ASC</option>
               <option value="-" >DESC</option>
             </select>
+          </div>
+          <div class="me-2">
+            <select
+                class="form-select"
+                v-model="student.batch"
+                name="course"
+                id="studetn-batch"
+              >
+                <option disabled value="null">Select Batch</option>
+                <option
+                  v-for="batch in batches"
+                  :key="batch.id"
+                  :value="batch.id"
+                >
+                  [[batch.title]]
+                </option>
+              </select>
           </div>
           <div>
             <input placeholder="Search..." type="input" v-model="q" class="form-control input-sm" @input="getAllStudent">
@@ -238,7 +251,8 @@
 
               <td>
                 [[i.name]] <br>
-                [[i.id]]
+                [[i.id]] <br>
+                [[i.student_roll]]
               </td>
               <td> 
                 <small class="">[[i.batch__name]]</small> <br>
@@ -292,7 +306,7 @@
                     </li>
                     <hr />
                     <li>
-                      <a href="#" class="dropdown-item" @click="editStudent(i.id)">Edit</a>
+                      <a href="#" class="dropdown-item" @click="getStudent(i.id)">Edit</a>
                     </li>
                   </ul>
                 </div>
@@ -301,6 +315,7 @@
           </tbody>
         </table>
       </div>
+
       <!--End Student table-->
 
       <!--Start Make Payment modal-->
@@ -526,7 +541,6 @@
 
       
       <!--Start Toast-->
-      
     </div>
     <!--End #app-->
 
@@ -651,7 +665,7 @@
             this.resetForm()
           },
 
-          editStudent(studentId){
+          getStudent(studentId){
             axios.defaults.xsrfCookieName = "csrftoken";
             axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
             axios.get(`http://127.0.0.1:8000/student/${studentId}/`)
