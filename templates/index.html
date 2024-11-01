@@ -110,10 +110,16 @@
         </div>
         <!--card 4-->
       </div>
+      <student-create-form 
+        @del-name="filterName"
+        :name-list="nameList"
+        />
     </div>
     <!-- End #app -->
 
     {% endblock content %} {% block script %}
+    <script src="{% static "js/StudentCreateForm.js" %}"></script>   
+
     <script>
       const data = JSON.parse("{{data|escapejs}}");
       console.log(data);
@@ -123,13 +129,27 @@
 
       const { createApp } = Vue;
       createApp({
+        components:{
+          StudentCreateForm
+        },
+        methods:{
+          filterName(n){
+            
+            this.nameList  = this.nameList.filter((i, index) => {
+              return index != n
+            })
+
+
+          },
+         
+        },
         mounted() {},
         data() {
           return {
             data: data,
+            nameList: ['orko', 'orin', 'orkut']
           };
         },
-        methods: {},
         delimiters: ["[[", "]]"],
       }).mount("#app");
     </script>
