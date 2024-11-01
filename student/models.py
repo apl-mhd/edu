@@ -75,11 +75,10 @@ class Student(models.Model):
         ('M', 'Male'),
         ('F', 'Female')
     ]
-    student_roll = models.IntegerField(null=True, blank=True, unique=True)
+    student_roll = models.IntegerField(unique=True)
     name = models.CharField(max_length=30)
     gender = models.CharField(
         max_length=1, choices=GENDER_CHOICES, null=True, blank=True)
-    roll = models.CharField(max_length=20, unique=True, null=True, blank=True)
     phone = models.CharField(max_length=20, unique=True)
     gurdian_phone = models.CharField(max_length=20, null=True, blank=True)
     email = models.EmailField(null=True, blank=True)
