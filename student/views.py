@@ -88,7 +88,7 @@ class StudentListFilter(ListAPIView):
             paid_current_month=Case(
                 When(Exists(current_month_payment_exists), then=Value(True)),
                 default=Value(False)
-            )).values('id', 'name', 'student_roll', 'hsc_batch__year', 'total_course_amount', 'total_discount', 'total_payment', 'paid_current_month', 'due_amount', 'batch__name', 'batch__start_time', 'batch__end_time', 'latest_payment')
+            )).values('id', 'name', 'phone', 'student_roll', 'hsc_batch__year', 'total_course_amount', 'total_discount', 'total_payment', 'paid_current_month', 'due_amount', 'batch__name', 'batch__start_time', 'batch__end_time', 'latest_payment')
 
         filter_by = self.request.query_params.get('filter_by', None)
 

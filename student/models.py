@@ -95,7 +95,7 @@ class Student(models.Model):
     hsc_gpa = models.DecimalField(
         max_digits=4, decimal_places=2, null=True, blank=True)
     batch = models.ForeignKey(
-        Batch, on_delete=models.CASCADE, null=True, blank=True, related_name="batch_name")
+        Batch, on_delete=models.CASCADE, related_name="batch_name")
     address = models.TextField(max_length=255, blank=True, null=True)
     remark = models.TextField(max_length=255, blank=True, null=True)
     status = models.BooleanField(default=True)

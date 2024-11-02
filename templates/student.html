@@ -19,13 +19,13 @@
       <div class="offcanvas offcanvas-end" ref  ="offCanvas" index="-1" id="studentForm" aria-labelledby="studentFormLabel">
         <div class="offcanvas-header">
           <h5 class="offcanvas-title" id="studentFormLabel">
-            [[student.id ? 'Update Student' : 'Create Student']]
+            [[student.id ? 'Update Student' : 'Create Student']] [[toastClass]]
           </h5>
           <button type="button" class="btn-close" @click="hideOffcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
           <form class="row gx-3 gy-4" @submit.prevent="studentForm">
-            <div class="col-6">
+            <div class="col-12">
                 <label for="name" class="form-label">Name *</label>
                 <input
                   type="text"
@@ -33,10 +33,14 @@
                   placeholder="Mahmud"
                   v-model="student.name"
                   class="form-control"
+                  :class = "errors.name ? 'is-invalid' : ''"
                   id="name"
+                  aria-describedby="nameValidation"
                 />
+                <div id="nameValidation" class="invalid-feedback">[[errors.name]]</div>
               </div>
-            <div class="col-6">
+
+            <div class="col-12">
               <label for="phone" class="form-label">Phone *</label>
               <input
                 type="text"
@@ -44,10 +48,14 @@
                 placeholder="015-xx-xx-xx-xx"
                 v-model="student.phone"
                 class="form-control"
+                :class = "errors.phone ? 'is-invalid' : ''"
+                aria-describedby="phoneValidation"
                 id="phone"
               />
+              <div id="phoneValidation" class="invalid-feedback">[[errors.phone]]</div>
+
             </div>
-            <div class="col-6">
+            <div class="col-12">
               <label for="ParentsPhone" class="form-label">Gurdian Phone</label>
               <input
                 type="text"
@@ -58,7 +66,7 @@
                 id="ParentsPhone"
               />
             </div>
-            <div class="col-6">
+            <div class="col-12">
               <label for="email" class="form-label">Email</label>
               <input
                 type="email"
@@ -69,26 +77,30 @@
                 id="email"
               />
             </div>
-            <div class="col-6">
+            <div class="col-12">
               <label for="gender" class="form-label">Gender *</label>
               <select
                 class="form-select"
                 v-model="student.gender"
                 name="gender"
                 id="gender"
+                :class = "errors.gender ? 'is-invalid' : ''"
+                aria-describedby="genderValidation"
               >
-                <option disabled value="null">Select Gender</option>
                 <option value="M">Male</option>
                 <option value="F">Female</option>
               </select>
+              <div id="genderValidation" class="invalid-feedback">[[errors.gender]]</div>
             </div>
-            <div class="col-6">
-              <label for="studetn-course" class="form-label">Batch</label>
+            <div class="col-12">
+              <label for="student-batch" class="form-label">Batch *</label>
               <select
                 class="form-select"
                 v-model="student.batch"
                 name="course"
-                id="studetn-batch"
+                id="student-batch"
+                :class = "errors.batch ? 'is-invalid' : ''"
+                aria-describedby="batchValidation"
               >
                 <option disabled value="null">Select Batch</option>
                 <option
@@ -99,14 +111,17 @@
                   [[batch.title]]
                 </option>
               </select>
+              <div id="batchValidation" class="invalid-feedback">[[errors.batch]]</div>
             </div>
-            <div class="col-6">
+            <div class="col-12">
               <label for="academicYear" class="form-label">HSC Batch *</label>
               <select
                 class="form-select"
                 name="hsc_batch"
                 v-model="student.hsc_batch"
                 id="academicYear"
+                :class = "errors.hsc_batch ? 'is-invalid' : ''"
+                aria-describedby="hscBatchValidation"
               >
                 <option disabled value="null">Select Batch</option>
                 <option
@@ -117,8 +132,9 @@
                   HSC Batch [[year.year]] -[[year.year+1]]
                 </option>
               </select>
+              <div id="hscBatchValidation" class="invalid-feedback">[[errors.hsc_batch]]</div>
             </div>
-            <div class="col-6">
+            <div class="col-12">
               <label for="location" class="form-label">Home Town</label>
               <select
                 class="form-select"
@@ -132,7 +148,7 @@
                 </option>
               </select>
             </div>
-            <div class="col-6">
+            <div class="col-12">
               <label for="college" class="form-label">College</label>
               <select
                 class="form-select"
@@ -166,14 +182,16 @@
       <!--Start toast-->
       <div class="toast-container position-fixed top-0 end-0 p-3">
         <div
+          ref="toast"
           id="successToast"
-          class="toast align-items-center text-bg-primary"
+          class="toast align-items-center"
+          :class="toastClass"
           role="alert"
           aria-live="assertive"
           aria-atomic="true"
         >
           <div class="d-flex">
-            <div class="toast-body">[[toastMessage]]</div>
+            <div class="toast-body" v-html="toastMessage"></div>
             <button
               type="button"
               class="btn-close btn-close-white me-2 m-auto"
@@ -205,7 +223,7 @@
                 class="form-select"
                 v-model="student.batch"
                 name="course"
-                id="studetn-batch"
+                id="student-batch"
               >
                 <option disabled value="null">Select Batch</option>
                 <option
@@ -236,7 +254,7 @@
             <tr>
               <th scope="col">ID</th>
               <th scope="col">
-                Name
+                Student Info
             </th>
               <th scope="col">Batch</th>
               <th scope="col">HSC Batch</th>
@@ -250,9 +268,9 @@
               <td scope="row">[[index+1]]</td>
 
               <td>
-                [[i.name]] <br>
-                [[i.id]] <br>
-                [[i.student_roll]]
+                <small>[[i.name]]</small> <br>
+                <small>Phone: [[i.phone]]</small> <br>
+                <small>ID# [[i.student_roll]]</small> <br>
               </td>
               <td> 
                 <small class="">[[i.batch__name]]</small> <br>
@@ -537,10 +555,6 @@
       <div>
       <!--End Payment History-->
 
-      <!--Start Toast-->
-
-      
-      <!--Start Toast-->
     </div>
     <!--End #app-->
 
@@ -600,7 +614,7 @@
               phone: null,
               gurdian_phone: null,
               email: null,
-              gender: null,
+              gender: 'M',
               batch: null,
               hsc_batch: null,
               home_town: null,
@@ -622,7 +636,7 @@
               phone: null,
               gurdian_phone: null,
               email: null,
-              gender: null,
+              gender: 'M',
               batch: null,
               hsc_batch: null,
               home_town: null,
@@ -651,11 +665,48 @@
             q: '',
             filterBy: '',
             sortBy: '',
-            latestPayment: ''
-
+            latestPayment: '',
+            errors: {} ,
           };
+
+
         },
         methods: {
+
+          formvalidation(){
+            if (!this.student.name){
+              this.errors.name = "Name is required"
+            }
+            else{
+              delete this.errors.name
+            }
+
+            if (!this.student.phone){
+              this.errors.phone = "Phone number is required"
+            }
+            else{
+              delete this.errors.phone
+            }
+            if (!this.student.gender){
+              this.errors.gender = "Gender is required"
+            }
+            else{
+              delete this.errors.gender
+            }
+            if (!this.student.batch){
+              this.errors.batch = "Batch is required"
+            }
+            else{
+              delete this.errors.batch
+            }
+            if (!this.student.hsc_batch){
+              this.errors.hsc_batch = "HSC batch is required"
+            }
+            else{
+              delete this.errors.hsc_batch
+            }
+            return Object.entries(this.errors).length 
+          },
           
           toggleOffcanvas(){
             this.offcanvasInstance.toggle()
@@ -679,13 +730,13 @@
             })
 
           },
-           showToast(msg, clasName) {
-            const successToast = document.getElementById("successToast");
-            const toastBootstrap = bootstrap.Toast.getOrCreateInstance(successToast);
+           showToast(msg, type='success') {
             this.toastMessage = msg
-            this.toastClass = clasName
-            toastBootstrap.show();
-
+            this.toastClass = type == 'success' ? 'text-bg-success' : 'text-bg-danger'
+            this.$nextTick(()=>{
+              const toastBootstrap = bootstrap.Toast.getOrCreateInstance(this.$refs.toast);
+              toastBootstrap.show();
+            })
           },
           
           resetForm() {
@@ -714,16 +765,18 @@
                 this.courseAssignFormData
               )
               .then((response) => {
-                this.showToast(response.data.message, 'text-bg-primary')
+                this.showToast(response.data.message)
                 this.getAllStudent();
 
               })
               .catch((error) => {
                 const errorData = error.response.data
-                this.showToast(errorData.message)
+                this.showToast(errorData.message, 'error')
               });
           },
           studentForm() {
+            if(this.formvalidation()) return
+           
             axios.defaults.xsrfCookieName = "csrftoken";
             axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
             if(this.student.id){
@@ -733,7 +786,7 @@
                 bsOffcanvas.hide()     
                 this.getAllStudent();
                 this.resetForm();
-                this.showToast("successfully updated", 'text-bg-primary')
+                this.showToast("successfully updated")
 
                 this.toggleOffcanvas()
 
@@ -748,13 +801,17 @@
                 .then((response) => {
                   this.getAllStudent();
                   this.resetForm();
-                  this.showToast(response.data.message, 'text-bg-primary')
+                  this.showToast(response.data.message)
                 })
                 .catch((error) => {
                   const errorData = error.response.data
-                  this.showToast(errorData.message)
-                  console.log(errorData.errors.name)
-                  this.toggleOffcanvas()
+                  let msg = ''
+                  for( const [key , value]  of Object.entries(errorData.errors) ){
+                    msg += `${key}: ${value} <br>`
+                 }
+                  
+                  this.showToast(msg, 'error')
+                 // this.toggleOffcanvas()
 
                 });
               }
@@ -771,17 +828,16 @@
               .then((response) => {
                 this.paymentFormData = { ...this.blankPaymentForm };
                 this.getAllStudent();
-                this.showToast(response.data.message, 'text-bg-primary')
+                this.showToast(response.data.message)
 
               })
               .catch((error) => {
                 const errorData = error.response.data
-                this.showToast(errorData.message)
+                this.showToast(errorData.message, 'error')
               });
           },
 
           getAllStudent() {
-            console.log(`http://127.0.0.1:8000/student/filter/?q=${this.q}&filter_by=${this.filterBy}`)
             axios.defaults.xsrfCookieName = "csrftoken";
             axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
             axios
@@ -790,7 +846,6 @@
                 this.studentsList = response.data.results;
               })
               .catch((error) => {
-                console.log(error);
               });
           },
           studentData(i) {

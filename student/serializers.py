@@ -35,6 +35,8 @@ class StudentSerializer(serializers.ModelSerializer):
         model = Student
         fields = '__all__'
 
+        read_only_fields = ['student_roll']
+
     def create(self, validated_data):
 
         hsc_batch = validated_data['hsc_batch']
