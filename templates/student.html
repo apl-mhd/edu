@@ -220,12 +220,13 @@
           </div>
           <div class="me-2">
             <select
+                @change="getAllStudent"
+                v-model="batchBy"
                 class="form-select"
-                v-model="student.batch"
                 name="course"
                 id="student-batch"
               >
-                <option disabled value="null">Select Batch</option>
+                <option value="">All Batch</option>
                 <option
                   v-for="batch in batches"
                   :key="batch.id"
@@ -238,10 +239,12 @@
           <div>
             <input placeholder="Search..." type="input" v-model="q" class="form-control input-sm" @input="getAllStudent">
           </div>
-        </div>
-        <div>
+          </div>
+          <div>
           <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#studentForm" aria-controls="studentForm">Add Student</button>
         </div>
+
+        <a :href="`{% url 'report' %}?batch=${batchBy}`" target="_blank">Print</a>
       </div>
       <!-- End Search Student-->
 
@@ -665,6 +668,7 @@
             q: '',
             filterBy: '',
             sortBy: '',
+            batchBy: '',
             latestPayment: '',
             errors: {} ,
           };
@@ -841,7 +845,7 @@
             axios.defaults.xsrfCookieName = "csrftoken";
             axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
             axios
-              .get(`http://127.0.0.1:8000/student/filter/?q=${this.q}&filter_by=${this.sortBy}${this.filterBy}`)
+              .get(`http://127.0.0.1:8000/student/filter/?q=${this.q}&filter_by=${this.sortBy}${this.filterBy}&batch=${this.batchBy}`)
               .then((response) => {
                 this.studentsList = response.data.results;
               })

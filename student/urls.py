@@ -9,4 +9,5 @@ urlpatterns = [
     path("all/", views.StudentList.as_view(), name='student-all'),
     path("filter/", views.StudentListFilter.as_view(), name='student-filter'),
     path("list-test/", views.StudentListTest.as_view(), name='student-list-test'),
+    path("report/", views.studentReportListView.as_view(), name='report'),
 ]

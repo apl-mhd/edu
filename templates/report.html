@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <style>
+         @page {
+        size: a4 portrait;
+        @frame header_frame {           /* Static Frame */
+            -pdf-frame-content: header_content;
+            left: 50pt; width: 512pt; top: 50pt; height: 40pt;
+        }
+        @frame content_frame {          /* Content Frame */
+            left: 50pt; width: 512pt; top: 90pt; height: 632pt;
+        }
+        @frame footer_frame {           /* Another static Frame */
+            -pdf-frame-content: footer_content;
+            left: 50pt; width: 512pt; top: 772pt; height: 20pt;
+        }
+    }
+
+    table{
+    width: 100%;
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 20px;
+    }
+    td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 2px;
+}
+  tr:nth-child(even) {
+    background-color: red;
+  }
+  .main{
+    width: 100%;
+     margin: 0 auto;
+  }
+  .head{
+    width: 500px;
+    margin: 0 auto;
+  }
+  .row-warning {
+    background-color: #ffcccc; /* Light red background */
+}
+    </style>
+  </head>
+  <body>
+    <div class="main">
+      <div class="head">
+        <h1>Noyn ICT Care</h1>
+        <h2>Batch Name: {{batch.get_batch_details}}</h2>
+        <h2>Date: {{date_time}}</h2>
+
+      </div>
+     
+        <table>
+          <tr>
+              <th>SL</th>
+              <th>Name</th>
+              <th>Batch</th>
+              <th>Due Amount</th>
+              <th>Current Month Payment</th>
+              <th>Payment Amount</th>
+          </tr>
+          {% for i in students %}
+          {% comment %} class="{% if i.paid_current_month == 'No' %} row-warning {% endif %}" {% endcomment %}
+          <tr  >
+              <td>{{forloop.counter}}</td>
+              <td>
+                {{i.name}} <br>
+                {{i.student_roll}}
+              </td>
+              <td>{{i.batch}}</td>
+              <td>{{i.due_amount}}</td>
+              <td>{{i.paid_current_month}}</td>
+              <td> </td>
+
+          </tr>
+          {% empty%}
+
+           <tr>
+            <td colspan="6">No students found.</td>
+          </tr>
+
+          {% endfor %}
+        </table>  
+    </div>
+
+    <div id="footer_content">(c) - page <pdf:pagenumber>
+        of <pdf:pagecount>
+      </div>
+
+  </body>
+</html>

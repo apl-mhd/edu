@@ -40,9 +40,9 @@ class Batch(models.Model):
     def get_batch_details(self):
         day_names = ""
         for day in self.days.all():
-            day_names += f"-{day.name}"
+            day_names += f" - {day.name}"
 
-        return f"{self.name} {day_names}- From {self.start_time.strftime('%I:%M %p')} To {self.end_time.strftime('%I:%M %p')}"
+        return f"{self.name} {day_names} - From {self.start_time.strftime('%I:%M %p')} To {self.end_time.strftime('%I:%M %p')}"
 
 
 class AcademicYear(models.Model):
