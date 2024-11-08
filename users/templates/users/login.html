@@ -1,0 +1,55 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{% static "css/bootstrap_5.3.css" %}">
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"  />
+    <link rel="stylesheet" href="{% static "css/style.css" %}">
+    
+    {% block css %}{% endblock css %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{% static "js/axios.js" %}"></script>
+    <script src="{% static "js/vue.js" %}"></script>   
+    <script src="{% static "js/bootstrap_5.3.js" %}"></script>
+
+</head>
+<body>
+
+ 
+
+      <div class="d-flex justify-content-center align-items-center min-vh-100">
+        <div>
+          <form method="post" class="">
+                {% csrf_token %}
+              <div class="mb-3">
+                <label for="usernameInput" class="form-label">Username</label>
+                <input type="text" name="username" class="form-control" id="usernameInput" placeholder="username">
+              </div>
+
+              <div class="mb-3">
+                <label for="passwordInput" class="form-label">Password</label>
+                <input type="password" name="password" class="form-control" id="passwordInput">
+              </div>
+
+              {% if message %}
+                  <div class="alert alert-danger">{{message}}</div>
+              {% endif %}
+
+              <div class="mb-3 d-flex align-items-end">
+                <button class="btn btn-success">Login</button>
+              </div>
+          
+          </form>
+      </div>
+      </div>
+ 
+</body>
+</html>
