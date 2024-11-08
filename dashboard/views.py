@@ -21,6 +21,44 @@ from django.utils import timezone
 
 from django.db.models.functions import Coalesce, Concat, Cast
 from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authtoken.models import Token
+from django.contrib.auth.models import User
+from rest_framework.authtoken.views import ObtainAuthToken
+
+
+class CustomAuthToken(ObtainAuthToken):
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(
+            data=request.data, context={'request': request})
+
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({
+            'token': token.key,
+            'user_id': user.pk,
+            'email': user.email
+        })
+
+
+class ExampleView(APIView):
+    user = User.objects.first()
+    # token = Token.objects.create(user=user)
+
+    # authentication_classes = [SessionAuthentication, BasicAuthentication]
+    # parser_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        content = {
+            'user': str(request.user),  # `django.contrib.auth.User` instance.
+            'auth': str(request.auth),  # None
+        }
+
+        return Response(content)
 
 
 class IndexTemplateView(TemplateView):
@@ -38,7 +76,7 @@ class IndexTemplateView(TemplateView):
 
         total_amount = Payment.objects.aggregate(
             total=Sum('payment_amount'))
-        
+
         total_student = Student.objects.aggregate(
             total=Sum(1)
         )
@@ -48,8 +86,6 @@ class IndexTemplateView(TemplateView):
 
         monthly_payment = Payment.objects.filter(
             payment_date__gte=start_of_month).aggregate(total_amount=Sum('payment_amount'), total_student=Sum(1))
-        
-
 
         data = {
             "total_payment_amount": total_amount['total'],
