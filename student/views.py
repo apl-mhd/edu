@@ -26,6 +26,7 @@ from django.views.generic.list import ListView
 from django_xhtml2pdf.views import PdfMixin
 from django.views import View
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 class StudentDetailView(RetrieveUpdateAPIView):
@@ -33,7 +34,7 @@ class StudentDetailView(RetrieveUpdateAPIView):
     serializer_class = StudentSerializer
 
 
-class studentReportListView(PdfMixin, ListView):
+class studentReportListView(LoginRequiredMixin, PdfMixin, ListView):
     template_name = 'report.html'
 
     def get_queryset(self):
@@ -299,14 +300,7 @@ class StudentCreateView(APIView):
             return Response({'status': 'failed', 'message': 'something went wrong', 'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-# Not needed
-def index(request):
-    district = District.objects.all()
-    print(district)
-    return render(request, 'index.html')
-
-
-class StudentTemplateView(TemplateView):
+class StudentTemplateView(LoginRequiredMixin, TemplateView):
     template_name = 'student.html'
 
     def get_context_data(self, **kwargs):
@@ -328,24 +322,3 @@ class StudentTemplateView(TemplateView):
         context['batch_list'] = json.dumps(list(batch_list))
 
         return context
-
-
-def student(request):
-    district_list = District.objects.all().values("id", "name")
-    college_list = College.objects.all().values("id", "name")
-    course_list = Course.objects.all().values("id", "name", "course_fee")
-    academic_year_list = AcademicYear.objects.all().values('id', 'year')
-    batches = Batch.objects.all()
-
-    batch_list = [{"id": i.id, "title": i.get_batch_details()}
-                  for i in batches]
-
-    context = {
-        'home_town_list': json.dumps(list(district_list)),
-        'college_list': json.dumps(list(college_list)),
-        'course_list': json.dumps(list(course_list)),
-        'academic_year_list': json.dumps(list(academic_year_list)),
-        'batch_list': json.dumps(list(batch_list)),
-    }
-
-    return render(request, 'student.html', context=context)
