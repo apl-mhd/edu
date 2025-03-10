@@ -1,8 +1,10 @@
 from django.urls import path
-from . import views
+from . import views, apiviews
 
 urlpatterns = [
     # path("", views.index, name='index'),
+    path("data-form/", apiviews.StudentDataFormAPIView.as_view(),
+         name='student-data-form'),
     path("<int:pk>/", views.StudentDetailView.as_view(), name='student-detail'),
     path("create/", views.StudentTemplateView.as_view(), name='student-create'),
     path("test/", views.StudentCreateView.as_view(), name='student-test'),
