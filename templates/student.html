@@ -857,9 +857,9 @@
             axios.defaults.xsrfCookieName = "csrftoken";
             axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
             axios
-              .get(`http://127.0.0.1:8000/student/filter/?q=${this.q}&filter_by=${this.sortBy}${this.filterBy}&batch=${this.batchBy}`)
+              .get(`http://127.0.0.1:8000/students/filter/?q=${this.q}&filter_by=${this.sortBy}${this.filterBy}&batch=${this.batchBy}`)
               .then((response) => {
-                this.studentsList = response.data;
+                this.studentsList.results = response.data;
               })
               .catch((error) => {
               });
