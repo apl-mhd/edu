@@ -735,7 +735,7 @@
           getStudent(studentId){
             axios.defaults.xsrfCookieName = "csrftoken";
             axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
-            axios.get(`http://127.0.0.1:8000/student/${studentId}/`)
+            axios.get(`http://127.0.0.1:8000/api/students/${studentId}/`)
             .then(response =>{
               this.student = response.data
               this.toggleOffcanvas()
