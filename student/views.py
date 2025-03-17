@@ -6,7 +6,7 @@ from address.models import District, College
 from course.models import Course, Payment, Discount, StudentEnroll
 from course.serializers import PaymentSerializer
 from .models import AcademicYear, Student, Batch
-from course.models import StudentBilling
+from course.models import Fee
 import json
 from .serializers import StudentSerializer
 from rest_framework.response import Response
@@ -286,7 +286,7 @@ class StudentListTest(APIView):
 
         students = Student.objects.select_related('batch').annotate(
             total_course_amount=Subquery(
-                StudentBilling.objects.filter(student=OuterRef('pk')).values('student').annotate(
+                Fee.objects.filter(student=OuterRef('pk')).values('student').annotate(
                     total=Sum('course_fee')
                 ).values('total')
             ),

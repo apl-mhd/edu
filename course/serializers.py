@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import Payment
 from student.models import Student, Batch
-from course.models import Course, StudentEnroll, StudentBilling, Discount
+from course.models import Course, StudentEnroll, Fee, Discount
 from django.db import transaction
 
 

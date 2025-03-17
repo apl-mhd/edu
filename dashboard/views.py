@@ -6,7 +6,7 @@ from address.models import District, College
 from course.models import Course, Payment, Discount, StudentEnroll
 from course.serializers import PaymentSerializer
 from student.models import AcademicYear, Student, Batch
-from course.models import StudentBilling
+from course.models import Fee
 import json
 from student.serializers import StudentSerializer
 from rest_framework.response import Response
