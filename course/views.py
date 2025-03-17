@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 
 from address.models import District, College
-from course.models import Course, Payment, StudentBilling, StudentEnroll
+from course.models import Course, Payment, Fee, StudentEnroll
 from student.models import Student
 import json
 from .serializers import PaymentSerializer, CourseAssignSerializer

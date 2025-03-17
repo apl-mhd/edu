@@ -33,7 +33,7 @@ class StudentEnroll(models.Model):
         return f"{self.student.name}-{self.course.name}--{self.course_fee}"
 
 
-class StudentBilling(models.Model):
+class Fee(models.Model):
 
     FEE_TYPES = [
         ('tuition', 'Tuition Fee'),

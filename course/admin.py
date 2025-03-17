@@ -5,5 +5,5 @@ from . models import *
 
 admin.site.register(Course)
 admin.site.register(StudentEnroll)
-admin.site.register(StudentBilling)
+admin.site.register(Fee)
 admin.site.register(Payment)
