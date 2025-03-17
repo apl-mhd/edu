@@ -33,7 +33,8 @@ class BatchSerializer(serializers.ModelSerializer):
 class StudentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
-        fields = '__all__'
+        # fields = '__all__'
+        exclude = ['created_at', 'updated_at']
 
         read_only_fields = ['student_roll']
 
