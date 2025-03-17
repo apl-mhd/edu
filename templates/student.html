@@ -766,7 +766,7 @@
               .get(
                 `http://127.0.0.1:8000/course/student-payment-list/${student.id}/`)
               .then((response) => {
-                this.studentPaymentList = response.data.results
+                this.studentPaymentList = response.data
               })
               .catch((error) => {
                 console.log(error);

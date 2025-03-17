@@ -1,6 +1,7 @@
+from django.db.models.functions import *
+from django.db.models import Count, Avg, Case, When, IntegerField
+from django.utils.timezone import now, timedelta
 from django.shortcuts import render
-from django.http import HttpResponse
-from pathlib import Path
 from address.models import District, College
 from course.models import Course, Payment, Discount, StudentEnroll
 from course.serializers import PaymentSerializer
@@ -190,6 +191,43 @@ class StudentListFilter(ListAPIView):
     #     payment = Payment.objects.all()
     #     data = PaymentSerializer(payment, many=True)
     #     return Response(data.data)
+
+
+class PracticeView(APIView):
+    def get(self, request, *args, **kwargs):
+        days = int(request.query_params.get('days')) + 1
+
+        current_month = timezone.now().replace(day=1)
+
+        current_month_payment_exists = Payment.objects.filter(
+            student=OuterRef('pk'),
+            payment_date__gte=current_month).values('id')[:1]
+
+        d = Discount.objects.aggregate(
+            total=Sum('discount_amount'),
+            average=Avg('discount_amount'),
+        )
+        p = Payment.objects.annotate(month=TruncYear('payment_date')).values('month').annotate(
+            total=Sum('payment_amount'))
+
+        subquery1 = StudentEnroll.objects.filter(student=OuterRef('id')).values(
+            'student')
+
+        subquery2 = Discount.objects.filter(
+            student=OuterRef('id')).values('student')
+
+        students2 = Student.objects.annotate(
+            total_course_fee=Subquery(subquery1.annotate(
+                total=Sum('course_fee')
+            ).values('total')
+            ),
+            total_discount=Subquery(subquery2.annotate(
+                total=Sum('discount_amount')
+            ).values('total')
+            ),
+        ).values('id', 'name', 'total_discount', 'total_course_fee')
+
+        return Response(data={'d': p, 'discount': 'students1', 'data': students2, 'total': []})
 
 
 class StudentList(APIView):
