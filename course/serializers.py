@@ -5,6 +5,12 @@ from course.models import Course, StudentEnroll, Fee, Discount
 from django.db import transaction
 
 
+class CourseSerializer(serializers.ModelSerializer):
+     class Meta:
+        model = Course
+        fields = "__all__"
+
+
 class PaymentSerializer(serializers.ModelSerializer):
 
     class Meta:

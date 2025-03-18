@@ -5,7 +5,7 @@ from address.models import District, College
 from course.models import Course, Payment, Fee, StudentEnroll
 from student.models import Student
 import json
-from .serializers import PaymentSerializer, CourseAssignSerializer
+from .serializers import PaymentSerializer, CourseAssignSerializer, CourseSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
@@ -15,6 +15,11 @@ from django.utils import timezone
 from django.db import transaction
 from rest_framework.generics import ListAPIView
 from rest_framework.exceptions import NotFound
+
+
+class CourseView(ListAPIView):
+    queryset = Student.objects.all()
+    serailizer = CourseSerializer
 
 
 class PaymentView(APIView):
