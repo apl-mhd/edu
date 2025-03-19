@@ -764,7 +764,7 @@
             axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
             axios
               .get(
-                `http://127.0.0.1:8000/course/student-payment-list/${student.id}/`)
+                `http://127.0.0.1:8000/api/courses/student-payment-list/${student.id}/`)
               .then((response) => {
                 this.studentPaymentList = response.data
               })
@@ -777,7 +777,7 @@
             axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
             axios
               .post(
-                "http://127.0.0.1:8000/course/course-assign/",
+                "http://127.0.0.1:8000/api/courses/course-assign/",
                 this.courseAssignFormData
               )
               .then((response) => {
@@ -838,7 +838,7 @@
             axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
             axios
               .post(
-                "http://127.0.0.1:8000/course/payment/",
+                "http://127.0.0.1:8000/api/courses/payment/",
                 this.paymentFormData
               )
               .then((response) => {

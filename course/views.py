@@ -1,21 +1,16 @@
-from django.shortcuts import render
-from django.http import HttpResponse
-
-from address.models import District, College
-from course.models import Course, Payment, Fee, StudentEnroll
-from student.models import Student
-import json
-from .serializers import PaymentSerializer, CourseAssignSerializer, CourseSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
-# Create your views here.
-from django.db.models import Subquery, Sum, OuterRef, When, Case, Exists, Value, F, Q
-from django.utils import timezone
-from django.db import transaction
 from rest_framework.generics import ListAPIView
 from rest_framework.exceptions import NotFound
 
+from course.models import Payment
+from student.models import Student
+from .serializers import (
+    PaymentSerializer,
+    CourseAssignSerializer,
+    CourseSerializer
+)
 
 class CourseView(ListAPIView):
     queryset = Student.objects.all()
@@ -53,21 +48,6 @@ class CourseAssingView(APIView):
 
             else:
                 return Response({"message": "Validation Error", "data": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-
-            # if serializer.is_valid():
-            #     print('apel')
-            # else:
-            #     print("not valid")
-
-            # s = Student.objects.filter(pk=1).first()
-            # # request.data['student'] = 100
-            # serializer = PaymentSerializer(data=request.data)
-
-            # if serializer.is_valid():
-            #     serializer.save()
-            #     return Response({"message": "Payment Successfully", "data": serializer.data}, status=status.HTTP_201_CREATED)
-            # else:
-            #     print(serializer.errors)
 
         except Exception as e:
             return Response({"message": 'something went wrong'}, status=status.HTTP_400_BAD_REQUEST)
