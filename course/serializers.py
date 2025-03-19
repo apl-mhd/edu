@@ -10,6 +10,10 @@ class CourseSerializer(serializers.ModelSerializer):
         model = Course
         fields = "__all__"
 
+class CourseSerializer2(serializers.ModelSerializer):
+     class Meta:
+        model = Course
+        fields = ["name"]
 
 class PaymentSerializer(serializers.ModelSerializer):
 
