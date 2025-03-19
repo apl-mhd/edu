@@ -431,7 +431,7 @@
             axios.defaults.xsrfCookieName = "csrftoken";
             axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
             axios
-              .post("http://127.0.0.1:8000/student/test/", this.student)
+              .post("http://127.0.0.1:8000/students/ceate/", this.student)
               .then((response) => {
                 this.getAllStudent();
                 this.resetForm();
@@ -462,7 +462,7 @@
             axios.defaults.xsrfCookieName = "csrftoken";
             axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
             axios
-              .get("http://127.0.0.1:8000/student/all/")
+              .get("http://127.0.0.1:8000/students/")
               .then((response) => {
                 this.studentsList = response.data;
               })

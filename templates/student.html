@@ -796,7 +796,7 @@
             axios.defaults.xsrfCookieName = "csrftoken";
             axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
             if(this.student.id){
-              axios.put(`http://127.0.0.1:8000/student/${this.student.id}/`, this.student)
+              axios.put(`http://127.0.0.1:8000/students/update/${this.student.id}/`, this.student)
               .then(response =>{
                 const bsOffcanvas = new bootstrap.Offcanvas('#studentForm')
                 bsOffcanvas.hide()     
@@ -813,7 +813,7 @@
             
             else {
               axios
-                .post("http://127.0.0.1:8000/student/test/", this.student)
+                .post("http://127.0.0.1:8000/students/create/", this.student)
                 .then((response) => {
                   this.getAllStudent();
                   this.resetForm();

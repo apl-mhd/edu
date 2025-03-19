@@ -1,32 +1,26 @@
-from django.db.models.functions import *
-from django.db.models import Count, Avg, Case, When
-from django.utils.timezone import now, timedelta
-from django.shortcuts import render
-from address.models import District, College
-from course.models import Course, Payment, Discount, StudentEnroll
-from course.serializers import PaymentSerializer
-from .models import AcademicYear, Student, Batch
-from course.models import Fee
 import json
-from .serializers import StudentSerializer
+
+from django.utils import timezone
+from django.db.models import (
+    Subquery, Sum, OuterRef, When, Case, Exists, Value, F, Q, Max
+)
+from django.db.models.functions import Coalesce
+from django.views.generic.base import TemplateView
+from django.views.generic.list import ListView
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.decorators import api_view
 from rest_framework.views import APIView
-from rest_framework.generics import ListAPIView, RetrieveAPIView, RetrieveUpdateAPIView
-from django.views.generic.base import TemplateView
-# Create your views here.
-from django.db.models import Subquery, Sum, OuterRef, When, Case, Exists, Value, F, CharField, Q, Max
-from django.utils import timezone
+from rest_framework.generics import ListAPIView, RetrieveUpdateAPIView
+from rest_framework.pagination import LimitOffsetPagination
 
-from django.db.models.functions import Coalesce, Concat, Cast
-from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
-from django_xhtml2pdf.utils import generate_pdf
-from django.views.generic.list import ListView
 from django_xhtml2pdf.views import PdfMixin
-from django.views import View
-from django.shortcuts import get_object_or_404
-from django.contrib.auth.mixins import LoginRequiredMixin
+
+from address.models import District, College
+from course.models import Course, Payment, Discount, StudentEnroll
+from .models import AcademicYear, Student, Batch
+from .serializers import StudentSerializer
 
 
 class StudentDetailView(RetrieveUpdateAPIView):
@@ -211,52 +205,6 @@ class StudentList(APIView):
                 When(Exists(current_month_payment_exists), then=Value(True)),
                 default=Value(False)
             )).values('id', 'name', 'hsc_batch__year', 'total_course_amount', 'total_discount', 'total_payment', 'paid_current_month', 'due_amount', 'batch__name', 'batch__start_time', 'batch__end_time').order_by('-id')
-
-        data = students
-        return Response(data)
-
-
-class StudentListTest(APIView):
-    def get(self, requst, *args, **kwargs):
-
-        current_month = timezone.now().replace(
-            day=1)
-
-        current_month_payment_exists = Payment.objects.filter(
-            student=OuterRef('pk'),
-            payment_date__month=current_month.month,
-            payment_date__year=current_month.year
-        ).values('id')
-
-        students = Student.objects.select_related('batch').annotate(
-            total_course_amount=Subquery(
-                Fee.objects.filter(student=OuterRef('pk')).values('student').annotate(
-                    total=Sum('course_fee')
-                ).values('total')
-            ),
-            total_payment=Subquery(
-                Payment.objects.filter(student=OuterRef('pk')).values('student').annotate(
-                    total=Sum('payment_amount')
-                ).values('total')
-            ),
-            due_amount=F('total_course_amount') -
-            Coalesce(F('total_payment'), Value(0)),
-
-            paid_current_month=Case(
-                When(Exists(current_month_payment_exists), then=Value(True)),
-                default=Value(False)
-            ),
-
-            batch_details=Concat(
-                'batch__name',
-                Value(' - '),
-                Cast('batch__start_time', output_field=CharField()),
-                Value(' to '),
-                Cast('batch__end_time', output_field=CharField()),
-                output_field=CharField()
-            )
-
-        ).values('id', 'name', 'hsc_batch__year', 'total_course_amount', 'total_payment', 'paid_current_month', 'due_amount', 'batch_details').order_by('-id')
 
         data = students
         return Response(data)
