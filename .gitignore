@@ -15,7 +15,7 @@ venv.bak/
 *.log
 *.pot
 *.py~
-*.sqlite3
+.sqlite3
 *.env  # Environment variables file
 
 # Django cache, media, and static files
