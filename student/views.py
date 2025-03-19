@@ -29,6 +29,22 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 
+class CustomPagination(PageNumberPagination):
+    page_size = 1  # Number of records per page
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
+    def get_paginated_response(self, data):
+        return Response({
+            "count": self.page.paginator.count,
+            "total_pages": self.page.paginator.num_pages,
+            "current_page": self.page.number,
+            "next": self.get_next_link(),
+            "previous": self.get_previous_link(),
+            "results": data  # Rename "results" to "data"
+        })
+
+
 class StudentDetailView(RetrieveUpdateAPIView):
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
@@ -95,10 +111,9 @@ class studentReportListView(LoginRequiredMixin, PdfMixin, ListView):
 
 class StudentListFilter(ListAPIView):
     # serializer_class = PaymentSerializer
-    pagination_class = LimitOffsetPagination
+    pagination_class = CustomPagination
 
     def get_queryset(self):
-
         q_name = self.request.query_params.get('name', None)
         q_year = self.request.query_params.get('year', None)
         q_batch = self.request.query_params.get('batch', None)
@@ -158,9 +173,10 @@ class StudentListFilter(ListAPIView):
             )).values('id', 'name', 'phone', 'student_roll', 'hsc_batch__year', 'total_course_amount', 'total_discount', 'total_payment', 'paid_current_month', 'due_amount', 'batch__name', 'batch__start_time', 'batch__end_time', 'latest_payment')
 
         filter_by = self.request.query_params.get('filter_by', None)
+        sort_by = self.request.query_params.get('sort_by', '')
 
-        if filter_by and filter_by is not '-':
-            students = students.order_by(filter_by)
+        if filter_by and filter_by is not None:
+            students = students.order_by(f"{sort_by}{filter_by}")
 
         # data = {"name": "Sort by name",
         #         "batch__name": "Sort by batch", "hsc_batch__year": "Sort by HSC", "due_amount": "Sort by due amount", "paid_current_month": "Sort by current month"}
@@ -168,6 +184,7 @@ class StudentListFilter(ListAPIView):
         return students
 
     def list(self, request, *args, **kwargs):
+        print(request.query_params.get('page', None))
         queryset = self.get_queryset()
         page = self.paginate_queryset(queryset)
         if page is not None:
@@ -232,7 +249,6 @@ class PracticeView(APIView):
 
 class StudentList(APIView):
     def get(self, requst, *args, **kwargs):
-
         current_month = timezone.now().replace(
             day=1)
 
