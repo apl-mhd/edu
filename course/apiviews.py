@@ -3,7 +3,6 @@ from .models import Course
 from .serializers import CourseSerializer
 
 
-
 from course.models import Course, Payment
 from student.models import Student
 from .serializers import PaymentSerializer, CourseAssignSerializer, CourseSerializer
@@ -33,7 +32,6 @@ class PaymentView(APIView):
                 serializer.save()
                 return Response({"message": "Payment Successfull", "data": serializer.data}, status=status.HTTP_201_CREATED)
             else:
-                print(serializer.errors)
                 return Response({"message": "Payment Error", "data": serializer.errors}, status=status.HTTP_201_CREATED)
 
         except Exception as e:
@@ -48,14 +46,12 @@ class CourseAssingView(APIView):
     def post(self, request, *args, **kwargs):
         try:
             serializer = CourseAssignSerializer(data=request.data)
-            print(request.data)
             if serializer.is_valid():
                 serializer.save()
                 return Response(data={"message": "Successfully course assigned", "data": "serializer.data"}, status=status.HTTP_201_CREATED)
 
             else:
                 return Response({"message": "Validation Error", "data": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-
 
         except Exception as e:
             return Response({"message": 'something went wrong'}, status=status.HTTP_400_BAD_REQUEST)
