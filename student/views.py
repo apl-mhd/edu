@@ -1,5 +1,5 @@
 from django.db.models.functions import *
-from django.db.models import Count, Avg, Case, When, IntegerField
+from django.db.models import Count, Avg, Case, When
 from django.utils.timezone import now, timedelta
 from django.shortcuts import render
 from address.models import District, College
@@ -94,7 +94,6 @@ class studentReportListView(LoginRequiredMixin, PdfMixin, ListView):
 
 
 class StudentListFilter(ListAPIView):
-    # serializer_class = PaymentSerializer
     pagination_class = LimitOffsetPagination
 
     def get_queryset(self):
@@ -158,12 +157,10 @@ class StudentListFilter(ListAPIView):
             )).values('id', 'name', 'phone', 'student_roll', 'hsc_batch__year', 'total_course_amount', 'total_discount', 'total_payment', 'paid_current_month', 'due_amount', 'batch__name', 'batch__start_time', 'batch__end_time', 'latest_payment')
 
         filter_by = self.request.query_params.get('filter_by', None)
+        order_by = self.request.query_params.get('order_by', '')
 
-        if filter_by and filter_by is not '-':
-            students = students.order_by(filter_by)
-
-        # data = {"name": "Sort by name",
-        #         "batch__name": "Sort by batch", "hsc_batch__year": "Sort by HSC", "due_amount": "Sort by due amount", "paid_current_month": "Sort by current month"}
+        if filter_by and filter_by is not None:
+            students = students.order_by(f"{order_by}{filter_by}")
 
         return students
 
@@ -175,59 +172,6 @@ class StudentListFilter(ListAPIView):
 
         data = queryset
         return Response(data)
-
-    # def list(self):
-    #     queryset = super().get_queryset()
-    #     data = list(queryset.values())
-    #     return Response(data)
-
-    # def get(self, request):
-    #     payment = Payment.objects.all()
-    #     results = self.paginate_queryset(payment, request, view=self)
-    #     serializer = PaymentSerializer(results, many=True)
-    #     return self.get_paginated_response(serializer.data)
-
-    # def get(self, request):
-    #     payment = Payment.objects.all()
-    #     data = PaymentSerializer(payment, many=True)
-    #     return Response(data.data)
-
-
-class PracticeView(APIView):
-    def get(self, request, *args, **kwargs):
-        days = int(request.query_params.get('days')) + 1
-
-        current_month = timezone.now().replace(day=1)
-
-        current_month_payment_exists = Payment.objects.filter(
-            student=OuterRef('pk'),
-            payment_date__gte=current_month).values('id')[:1]
-
-        d = Discount.objects.aggregate(
-            total=Sum('discount_amount'),
-            average=Avg('discount_amount'),
-        )
-        p = Payment.objects.annotate(month=TruncYear('payment_date')).values('month').annotate(
-            total=Sum('payment_amount'))
-
-        subquery1 = StudentEnroll.objects.filter(student=OuterRef('id')).values(
-            'student')
-
-        subquery2 = Discount.objects.filter(
-            student=OuterRef('id')).values('student')
-
-        students2 = Student.objects.annotate(
-            total_course_fee=Subquery(subquery1.annotate(
-                total=Sum('course_fee')
-            ).values('total')
-            ),
-            total_discount=Subquery(subquery2.annotate(
-                total=Sum('discount_amount')
-            ).values('total')
-            ),
-        ).values('id', 'name', 'total_discount', 'total_course_fee')
-
-        return Response(data={'d': p, 'discount': 'students1', 'data': students2, 'total': []})
 
 
 class StudentList(APIView):
@@ -314,9 +258,6 @@ class StudentListTest(APIView):
 
         ).values('id', 'name', 'hsc_batch__year', 'total_course_amount', 'total_payment', 'paid_current_month', 'due_amount', 'batch_details').order_by('-id')
 
-        # students = Student.objects.all()
-
-        # serializer = StudentSerializer(students, many=True)
         data = students
         return Response(data)
 

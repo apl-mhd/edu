@@ -1,8 +1,10 @@
 from django.contrib import admin
 from django.urls import path, include
 from address import apiviews
+from student.views import StudentTemplateView
 
 urlpatterns = [
+    path("", StudentTemplateView.as_view(), name='students'),
     path('api/students/', include('student.urls')),
     path('api/districts/', include('address.urls')),
     path('admin/', admin.site.urls),
