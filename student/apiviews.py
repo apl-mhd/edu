@@ -1,22 +1,23 @@
-
 from django.utils import timezone
-from django.db.models import Q, When, Subquery, OuterRef, Sum, Case, Value, Exists, F, Max
+from django.db.models import (
+    Q, When, Subquery, OuterRef, Sum, Case, Value, Exists, F, Max
+)
 from django.db.models.functions import Coalesce
-from rest_framework.views import APIView
-from rest_framework.generics import ListAPIView
-from rest_framework.pagination import PageNumberPagination
-from rest_framework.generics import RetrieveUpdateAPIView
-from rest_framework.response import Response
+
 from rest_framework import status
-from .models import College, AcademicYear, Batch, Student
-from course.models import Course, Payment, StudentEnroll, Discount
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView, RetrieveUpdateAPIView
+from rest_framework.pagination import PageNumberPagination
+
 from address.models import District
+from course.models import Course, Payment, StudentEnroll, Discount
+from .models import College, AcademicYear, Batch, Student
 from .serializers import StudentSerializer
 
 
-
 class CustomPagination(PageNumberPagination):
-    page_size = 10  # Number of records per page
+    page_size = 1  # Number of records per page
     page_size_query_param = 'page_size'
     max_page_size = 100
 
@@ -27,12 +28,11 @@ class CustomPagination(PageNumberPagination):
             "current_page": self.page.number,
             "next": self.get_next_link(),
             "previous": self.get_previous_link(),
-            "data": data  # Rename "results" to "data"
+            "results": data  # Rename "results" to "data"
         })
 
 
 class StudentListFilter(ListAPIView):
-    # serializer_class = PaymentSerializer
     pagination_class = CustomPagination
 
     def get_queryset(self):
@@ -95,14 +95,15 @@ class StudentListFilter(ListAPIView):
             )).values('id', 'name', 'phone', 'student_roll', 'hsc_batch__year', 'total_course_amount', 'total_discount', 'total_payment', 'paid_current_month', 'due_amount', 'batch__name', 'batch__start_time', 'batch__end_time', 'latest_payment')
 
         filter_by = self.request.query_params.get('filter_by', None)
+        sort_by = self.request.query_params.get('sort_by', '')
 
-        if filter_by and filter_by is not '-':
-            students = students.order_by(filter_by)
+        if filter_by and filter_by is not None:
+            students = students.order_by(f"{sort_by}{filter_by}")
 
         return students
 
     def list(self, request, *args, **kwargs):
-        print(request.query_params.get('page', None))
+        # print(request.query_params.get('page', None))
         queryset = self.get_queryset()
         page = self.paginate_queryset(queryset)
         if page is not None:
@@ -110,10 +111,6 @@ class StudentListFilter(ListAPIView):
 
         data = queryset
         return Response(data)
-
-    
-
-
 
 
 class StudentCreateView(APIView):

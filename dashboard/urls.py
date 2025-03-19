@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import IndexTemplateView, ExampleView, CustomAuthToken
+from .views import IndexTemplateView, CustomAuthToken
 
 
 urlpatterns = [
