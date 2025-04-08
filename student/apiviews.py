@@ -9,6 +9,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView, RetrieveUpdateAPIView
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from address.models import District
 from course.models import Course, Payment, StudentEnroll, Discount
@@ -34,6 +36,9 @@ class CustomPagination(PageNumberPagination):
 
 class StudentListFilter(ListAPIView):
     pagination_class = CustomPagination
+
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         q_name = self.request.query_params.get('name', None)
