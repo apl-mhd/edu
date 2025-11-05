@@ -37,8 +37,8 @@ class CustomPagination(PageNumberPagination):
 class StudentListFilter(ListAPIView):
     pagination_class = CustomPagination
 
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [JWTAuthentication]
+    # permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         q_name = self.request.query_params.get('name', None)
